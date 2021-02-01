@@ -17,15 +17,15 @@ private:
   unsigned int antiAliasingSubdivisions = 2;
   float pixelPixelDistance = 1.0f;
 
-  Vector3D CheckRasterPixel(Scene* scene, Triangle2D* triangles, int numTriangles, Vector2D pixelRay){
+  Vector3D CheckRasterPixel(Scene* scene, Triangle2D** triangles, int numTriangles, Vector2D pixelRay){
       Vector3D color;
       float zBuffer = 3.402823466e+38f;
       
       for (int t = 0; t < numTriangles; t++) {
         Vector3D barycentric;
         
-        if (triangles[t].DidIntersect(pixelRay, &barycentric)) {
-          Vector3D tempInt = *triangles[t].t3p1 + (*triangles[t].t3e2 * barycentric.X) + (*triangles[t].t3e1 * barycentric.Y);
+        if (triangles[t]->DidIntersect(pixelRay, &barycentric)) {
+          Vector3D tempInt = *triangles[t]->t3p1 + (*triangles[t]->t3e2 * barycentric.X) + (*triangles[t]->t3e1 * barycentric.Y);
           float rayDistanceToTriangle = Vector3D(pixelRay.X + p.X, pixelRay.Y + p.Y, p.Z).CalculateEuclideanDistance(tempInt);
           
           if(rayDistanceToTriangle < zBuffer){//closest triangle to ray so far
@@ -35,7 +35,7 @@ private:
             for (int l = 0; l < scene->numLights; l++) {
               Vector3D lVector = scene->lights[l].p - tempInt;
   
-              float angle = triangles[t].normal.DotProduct(lVector.UnitSphere());
+              float angle = triangles[t]->normal.DotProduct(lVector.UnitSphere());
   
               if (angle > 0) {
                 float lDistance = scene->lights[l].p.CalculateEuclideanDistance(tempInt) / scene->lights[l].falloff;
@@ -51,7 +51,7 @@ private:
       return color;
   }
 
-  Vector3D CheckRasterPixelAntiAlias(int subdivisions, float pixelDistance, Scene* scene, Triangle2D* triangles, int numTriangles, Vector2D pixelRay){
+  Vector3D CheckRasterPixelAntiAlias(int subdivisions, float pixelDistance, Scene* scene, Triangle2D** triangles, int numTriangles, Vector2D pixelRay){
       Vector3D color;
       float pixelHDistance = pixelDistance / 2.0f;
       float scanDistance = pixelDistance / (float)subdivisions;
@@ -164,7 +164,7 @@ public:
       }
     }
     
-		Triangle2D* triangles = new Triangle2D[numTriangles];
+		Triangle2D** triangles = new Triangle2D*[numTriangles];
     int triangleCounter = 0;
 
     //for each object in the scene, get the triangles
@@ -173,7 +173,7 @@ public:
         //for each triangle in object, project onto 2d surface
         for (int j = 0; j < scene->objects[i]->GetTriangleAmount(); j++) {
           scene->objects[i]->GetTriangles()[i].Normal();
-          triangles[triangleCounter] = Triangle2D(q, p, scene->objects[i]->GetTriangles()[j]);
+          triangles[triangleCounter] = new Triangle2D(q, p, scene->objects[i]->GetTriangles()[j]);
           triangleCounter++;
         }
       }
@@ -193,6 +193,10 @@ public:
       pixelStorage[i].RGB = color.Divide(255.0f / maxBrightness).Constrain(0.0f, maxBrightness);
 		}
 
+    for (int i = 0; i < triangleCounter; i++){
+      delete triangles[i];
+    }
+    
 		delete[] triangles;
 	}
 

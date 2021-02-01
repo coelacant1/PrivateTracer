@@ -5,6 +5,7 @@
 #include "KalmanFilter.h"
 #include "TemporaryObjCamera.h"
 #include "Eye.h"
+#include "Mouth.h"
 #include "ObjectDeformer.h"
 
 const int ledsPerStrip = 306;
@@ -14,6 +15,7 @@ const int config = WS2811_GRB | WS2811_800kHz;
 OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
 
 Eye eyeTest;
+Mouth mouthTest;
 Light lights[6];
 Object3D* objects[4];
 Object3D faceObj = Object3D(face, 100, 50);
@@ -37,53 +39,79 @@ void setup() {
   Serial.println();
   Serial.println("Starting...");
 
-  lights[0].Set(Vector3D(1000, 0, 0), Vector3D(255, 0, 0), 1000.0f, 0.5f, 0.5f);//Set lights position, color intensity, falloff distance, and falloff curvature
-  lights[1].Set(Vector3D(0, 1000, 0), Vector3D(0, 255, 0), 1000.0f, 0.5f, 0.5f);
-  lights[2].Set(Vector3D(0, 0, 1000), Vector3D(0, 0, 255), 1000.0f, 0.5f, 0.5f);
-  lights[3].Set(Vector3D(-2000, 0, 0), Vector3D(120, 0, 120), 1000.0f, 0.5f, 0.5f);
-  lights[4].Set(Vector3D(0, -1000, 0), Vector3D(120, 120, 0), 1000.0f, 0.5f, 0.5f);
-  lights[5].Set(Vector3D(0, 0, -1000), Vector3D(0, 120, 120), 1000.0f, 0.5f, 0.5f);
+  lights[0].Set(Vector3D(1000, 0, 0), Vector3D(255, 0, 0), 1000.0f, 0.75f, 0.25f);//Set lights position, color intensity, falloff distance, and falloff curvature
+  lights[1].Set(Vector3D(0, 1000, 0), Vector3D(0, 255, 0), 1000.0f, 0.75f, 0.25f);
+  lights[2].Set(Vector3D(0, 0, 1000), Vector3D(0, 0, 255), 1000.0f, 0.75f, 0.25f);
+  lights[3].Set(Vector3D(-2000, 0, 0), Vector3D(120, 0, 120), 1000.0f, 0.75f, 0.25f);
+  lights[4].Set(Vector3D(0, -1000, 0), Vector3D(120, 120, 0), 1000.0f, 0.75f, 0.25f);
+  lights[5].Set(Vector3D(0, 0, -1000), Vector3D(0, 120, 120), 1000.0f, 0.75f, 0.25f);
 
   Serial.println("Linking objects: ");
   objects[0] = &faceObj;
   objects[1] = eyeTest.GetObject();
   objects[2] = &eyeBrowObj;
-  objects[3] = &mouthObj;
+  objects[3] = mouthTest.GetObject();//&mouthObj;
 
   scene = new Scene(objects, lights, 4, 6);
   Serial.println("Objects linked, scene created: ");
   delay(50);
 }
 
+int emotionIter = 0;
+
 void loop() {
   for (int i = 0; i < 720; i++) {
     Serial.print("Rendering frame ");
     Serial.print(i);
     Serial.print(" of 720 at ");
-    
-    if (i/2 > 300 * 2) eyeTest.Update(Eye::Sleepy, 0.06f);
-    else if (i/2 > 240 * 2) eyeTest.Update(Eye::Surprised, 0.06f);
-    else if (i/2 > 180 * 2) eyeTest.Update(Eye::Happy, 0.06f);
-    else if (i/2 > 120 * 2) eyeTest.Update(Eye::Angry, 0.06f);
-    else if (i/2 > 60 * 2) eyeTest.Update(Eye::Sad, 0.06f);
+
+    /*
+    if (i > 300 * 2) eyeTest.Update(Eye::Sleepy, 0.06f);
+    else if (i > 240 * 2) eyeTest.Update(Eye::Surprised, 0.06f);
+    else if (i > 180 * 2) eyeTest.Update(Eye::Happy, 0.06f);
+    else if (i > 120 * 2) eyeTest.Update(Eye::Angry, 0.06f);
+    else if (i > 60 * 2) eyeTest.Update(Eye::Sad, 0.06f);
     else eyeTest.Update(Eye::Neutral, 0.06f);
+
+    emotionIter++;
+
+    int baseTime = 120;
+
+    if(emotionIter / baseTime > 20) emotionIter = 0;
+
+    mouthTest.Update(emotionIter / baseTime, 0.1f);
+    */
+    
+    
+    if (i > 460) {
+      eyeTest.Update(Eye::Sleepy, 0.03f);
+      mouthTest.Update(Mouth::Smirk, 0.03f);
+    }
+    else if (i > 360){
+      eyeTest.Update(Eye::Surprised, 0.03f);
+      mouthTest.Update(Mouth::Poggers, 0.08f);
+    }
+    else{
+      eyeTest.Update(Eye::Neutral, 0.08f);
+      mouthTest.Update(Mouth::How, 0.1f);
+      objects[3]->Scale(Vector3D(1.0f + sinf(i * 3.14159f / 180.0f * 1.0f) * 0.3f, 1.0f + sinf(i * 3.14159f / 180.0f * 10.0f) * 0.025f, 1.0f), Vector3D(-170, 0, 0));
+      objects[1]->Scale(Vector3D(1.0f, 1.0f + sinf(i * 3.14159f / 180.0f * 1.5f) * 0.4f - 0.4f, 1.0f), Vector3D(-40, 130, 0));
+    }
+
+    
     
     objects[0]->Enable();
     objects[2]->Enable();
-    objects[3]->Enable();
     
     objects[0]->ResetVertices();
     objects[2]->ResetVertices();
-    objects[3]->ResetVertices();
+    //objects[3]->ResetVertices();
     
     objects[0]->Move(Vector3D(-35, 5, 0));
     objects[2]->Move(Vector3D(-40, 30, 0));
-    objects[3]->Move(Vector3D(-40, 20, 0));
+    //objects[3]->Move(Vector3D(-40, 20, 0));
 
-    sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 150.0f, sinf(i * 3.14159f / 180.0f * 0.1f), 0.02f, 1000.0f, ObjectDeformer::ZAxis);
-    sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 0.1f), 0.02f, 1.0f, ObjectDeformer::XAxis);
-    
-    objects[2]->Scale(Vector3D(1.0f + sin(i * 3.14159f / 180.0f * 1.0f) * 0.025f, 1.0f + sin(i * 3.14159f / 180.0f * 10.0f) * 0.025f, 1.0f), Vector3D(0, 0, 0));
+    objects[2]->Scale(Vector3D(1.0f + sinf(i * 3.14159f / 180.0f * 1.0f) * 0.025f, 1.0f + sinf(i * 3.14159f / 180.0f * 10.0f) * 0.025f, 1.0f), Vector3D(0, 0, 0));
     
     //objects[0]->Rotate(Vector3D(sinf(i * 3.14159f / 180.0f * 1.0f) * 20.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 20.0f, sinf(i * 3.14159f / 180.0f * 4.0f) * 90.0f), Vector3D(0, 100, 0));
     //objects[0]->Scale(Vector3D(1.0f + sinf(i * 3.14159f / 180.0f * 2.0f) * 0.2f, 1.0f + sinf(i * 3.14159f / 180.0f * 2.0f) * 0.2f, 1.0f + sinf(i * 3.14159f / 180.0f * 2.0f) * 0.2f), Vector3D(-50, 60, 0));
@@ -96,10 +124,29 @@ void loop() {
     
     //objects[1]->Move(Vector3D(-60.0f + sin(i * 3.14159f / 180.0f * 18.0f) * 10.0f, 20 + cos(i * 3.14159f / 180.0f * 36.0f) * 10.0f, 0.0f));
     
-    objects[0]->Rotate(Vector3D(3 + sinf(i * 3.14159f / 180.0f * 4.0f) * 1.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 1.0f, 0), Vector3D(0, 100, 0));
-    objects[1]->Rotate(Vector3D(sinf(i * 3.14159f / 180.0f * 4.0f) * 3.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 3.0f, 0), Vector3D(0, 100, 0));
-    objects[2]->Rotate(Vector3D(7 + sinf(i * 3.14159f / 180.0f * 4.0f) * 3.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 3.0f, 0), Vector3D(0, 100, 0));
-    objects[3]->Rotate(Vector3D(7 + sinf(i * 3.14159f / 180.0f * 4.0f) * 3.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 3.0f, 0), Vector3D(0, 100, 0));
+    objects[0]->Rotate(Vector3D(3 + sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, 0), Vector3D(0, 100, 0));
+    objects[1]->Rotate(Vector3D(sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, 0), Vector3D(0, 100, 0));
+    objects[2]->Rotate(Vector3D(7 + sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, 0), Vector3D(0, 100, 0));
+    objects[3]->Rotate(Vector3D(sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, 0), Vector3D(0, 100, 0));
+    
+    //sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 500.0f, sinf(-i * 3.14159f / 180.0f * 0.1f), 0.1f, 200.0f, ObjectDeformer::ZAxis);
+    sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 50.0f, sinf(-i * 3.14159f / 180.0f * 0.1f), 0.1f, 200.0f, ObjectDeformer::ZAxis);
+    sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 0.1f), 0.02f, 1.0f, ObjectDeformer::XAxis);
+
+    if (i < 360){
+      sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 100.0f, sinf(-i * 3.14159f / 180.0f * 0.1f), 0.1f, 200.0f, ObjectDeformer::ZAxis);
+
+      float a = Mathematics::Constrain(sinf(i * 3.14159f / 180.0f * 4.0f) * 4.0f + 2.0f, 0, 90);
+      
+      objects[0]->Rotate(Vector3D(0.0f, 0.0f, a), Vector3D(0, 100, 0));
+      objects[1]->Rotate(Vector3D(0.0f, 0.0f, a), Vector3D(0, 100, 0));
+      objects[2]->Rotate(Vector3D(0.0f, 0.0f, a), Vector3D(0, 100, 0));
+      objects[3]->Rotate(Vector3D(0.0f, 0.0f, a), Vector3D(0, 100, 0));
+    }
+    else{
+      
+    }
+
 
     //lights[0].MoveTo(Vector3D(sinf(i * 3.14159f / 180.0f * 2.0f) * 1000.0f, 0, -cosf(i * 3.14159f / 180.0f * 2.0f) * 1000.0f));//Lights can be moved to any vector coordinate
     //lights[1].MoveTo(Vector3D(sinf(i * 3.14159f / 180.0f * 4.0f) * 1000.0f, -cosf(i * 3.14159f / 180.0f * 4.0f) * 1000.0f, 0));

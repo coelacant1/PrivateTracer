@@ -28,6 +28,23 @@ Quaternion::Quaternion(float w, float x, float y, float z) {
 	this->Z = z;
 }
 
+Vector2D Quaternion::RotateVector(Vector2D coordinate) {
+ Quaternion current = Quaternion(this->W, this->X, this->Y, this->Z);
+  Quaternion qv = Quaternion(0, coordinate.X, coordinate.Y, 0);
+  Quaternion qr = current * qv * current.MultiplicativeInverse();
+
+  return Vector2D {
+    qr.X,
+    qr.Y
+  };
+}
+
+Vector2D Quaternion::UnrotateVector(Vector2D coordinate) {
+  Quaternion current = Quaternion(this->W, this->X, this->Y, this->Z);
+
+  return current.Conjugate().RotateVector(coordinate);
+}
+
 Vector3D Quaternion::RotateVector(Vector3D coordinate) {
 	Quaternion current = Quaternion(this->W, this->X, this->Y, this->Z);
 	Quaternion qv = Quaternion(0, coordinate.X, coordinate.Y, coordinate.Z);
