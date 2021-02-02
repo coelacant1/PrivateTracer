@@ -16,6 +16,7 @@ private:
   int vertexLength = 0;
   int triangleLength = 0;
   bool enabled = true;
+  bool invert = false;
   
 public:
   Object2D(const int maxVertices, const int maxTriangles){
@@ -71,6 +72,18 @@ public:
 
   bool IsEnabled(){
     return enabled;
+  }
+
+  void Invert(){
+    invert = true;
+  }
+
+  void Revert(){
+    invert = false;
+  }
+
+  bool IsInverted(){
+    return invert;
   }
 
   Quaternion GetRotation(){

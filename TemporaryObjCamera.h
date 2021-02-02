@@ -1,3 +1,5 @@
+#pragma once
+
 String pixelString =
 "U1,20,5,1\n"
 "U2,27,5,2\n"

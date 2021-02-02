@@ -42,3 +42,10 @@ bool Mathematics::IsFinite(float value) {
 int Mathematics::Sign(float value) {
 		return (0 < value) - (value < 0);
 }
+
+
+float Mathematics::CosineInterpolation(float beg, float fin, float ratio){
+   float mu2 = (1.0f - cosf(ratio * MPI)) / 2.0f;
+   
+   return(beg * (1.0f - mu2) + fin * mu2);
+}

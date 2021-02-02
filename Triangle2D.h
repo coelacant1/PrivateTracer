@@ -6,6 +6,8 @@
 #include "Vector2D.h"
 
 class Triangle2D {
+  float denominator = 0.0f;
+  
 public:
 	Vector2D* p1;
 	Vector2D* p2;
@@ -26,6 +28,8 @@ public:
 
     v0 = p2 - p1;
     v1 = p3 - p1;
+    
+    denominator = 1.0f / (v0.X * v1.Y - v1.X * v0.Y);
 	}
 
 	Triangle2D(Quaternion camQ, Vector3D camV, Triangle3D t) {
@@ -44,6 +48,8 @@ public:
     
     v0 = *p2 - *p1;
     v1 = *p3 - *p1;
+
+    denominator = 1.0f / (v0.X * v1.Y - v1.X * v0.Y);
 	}
 
   ~Triangle2D(){
@@ -59,20 +65,23 @@ public:
 
     v0 = *p2 - *p1;
     v1 = *p3 - *p1;
+
+    denominator = 1.0f / (v0.X * v1.Y - v1.X * v0.Y);
 	}
 
-	bool DidIntersect(Vector2D ray, Vector3D* color) {
-		Vector2D v2 = ray - *p1;
-		float den = v0.X * v1.Y - v1.X * v0.Y;
-		float v = (v2.X * v1.Y - v1.X * v2.Y) / den;
-		float w = (v0.X * v2.Y - v2.X * v0.Y) / den;
-		float u = 1.0f - v - w;
+	bool DidIntersect(Vector2D ray, float& u, float& v, float& w) {
+    float v2X = ray.X - p1->X;
+    float v2Y = ray.Y - p1->Y;
+    v = (v2X * v1.Y - v1.X * v2Y) * denominator;
+    w = (v0.X * v2Y - v2X * v0.Y) * denominator;
+		u = 1.0f - v - w;
 
-		color->X = v;
-		color->Y = w;
-		color->Z = u;
-
-		return u > 0 && v > 0 && w > 0;
+    if (u > 0 && v > 0 && w > 0){
+      return true;
+    }
+    else{
+      return false;
+    }
 	}
 
 	String ToString() {
