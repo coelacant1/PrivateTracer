@@ -80,6 +80,13 @@ public:
     return &eye;
   }
 
+  void Look(float ratio){
+    eye.GetTriangles()[0].p2->X += ratio * 20.0f - 10.0f;
+    eye.GetTriangles()[0].p3->X += ratio * 20.0f + 10.0f;
+    eye.GetTriangles()[0].p2->Y += ratio * 15.0f - 5.f;
+    eye.GetTriangles()[0].p3->Y += ratio * 15.0f + 5.0f;
+  }
+
   void Update(Emotion e, float rate){
     Interpolate(e, rate);
 

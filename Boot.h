@@ -1,18 +1,14 @@
-
-//have list of obj files
-
-//set active or not based on time stamp
+#pragma once
 
 #include "Object3D.h"
 #include "ObjectDeformer.h"
 #include "BootObjs.h"
-#include "TemporaryObjCamera.h"
+#include "Animation.h"
 
-class Boot{
+class Boot : public Animation {
 private:
   Light lights[6];
   Object3D* objects[7];
-  Scene* scene;
   Object3D protoDRV1Obj = Object3D(protoDRV1String, 150, 150);
   Object3D initObj = Object3D(initString, 100, 100);
   Object3D runningKernelObj = Object3D(runningKernelString, 260, 260);
@@ -20,10 +16,9 @@ private:
   Object3D doneObj = Object3D(doneBootString, 200, 200);
   Object3D cursorObj = Object3D(cursorString, 10, 10);
 
-  Object3D planeObj = Object3D(plane, 150, 250);
+  Object3D planeObj = Object3D(planeString, 150, 250);
   ObjectDeformer planeDeformer = ObjectDeformer(&planeObj);
   const int frames = 1260;
-  float fadeIn = 0.0f;
 
 public:
   Boot(){
@@ -45,15 +40,28 @@ public:
     scene = new Scene(objects, lights, 7, 6);
   }
 
-  int GetFrames(){
-    return frames;
+  void FadeIn(float stepRatio){
+      if (fade < 1.0f){
+        fade += stepRatio;
+        
+        float ratio = Mathematics::CosineInterpolation(0.0f, 1.0f, fade);
+        objects[0]->Scale(Vector3D(ratio, ratio, ratio), Vector3D(-40, 130, 0));
+      }
   }
 
-  Scene* GetScene(){
-    return scene;
+  void FadeOut(float stepRatio){
+      if (fade > 0.0f){
+        fade -= stepRatio;
+        
+        float ratio = Mathematics::CosineInterpolation(0.0f, 1.0f, fade);
+        objects[0]->Scale(Vector3D(ratio, ratio, ratio), Vector3D(-40, 130, 0));
+      }
   }
 
-  void Update(int i){
+  void Update(float ratio){
+    ratio = Mathematics::Constrain(ratio, 0.0f, 1.0f);
+    int i = (int)(ratio * (float)frames);
+    
     objects[0]->ResetVertices();
     objects[1]->ResetVertices();
     objects[2]->ResetVertices();
@@ -92,15 +100,7 @@ public:
       objects[5]->Disable();
       objects[6]->Disable();
       
-      if (fadeIn < 1.0f){
-        fadeIn += 0.0125f;
-        
-        float ratio = Mathematics::CosineInterpolation(0.0f, 1.0f, fadeIn);
-        objects[0]->Scale(Vector3D(ratio, ratio, ratio), Vector3D(-40, 130, 0));
-      }
-      
       objects[0]->Scale(Vector3D(-1, 1, 1));
-
       objects[0]->Move(Vector3D(120, 70, 0));
     } else if (i < 270){//init
       objects[0]->Disable();
