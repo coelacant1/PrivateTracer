@@ -1,4 +1,5 @@
 #include <OctoWS2811.h>
+#include <Audio.h>
 
 #include "Camera.h"
 #include "Rotation.h"
@@ -13,12 +14,21 @@ DMAMEM int displayMemory[ledsPerStrip * 6];
 int drawingMemory[ledsPerStrip * 6];
 const int config = WS2811_GRB | WS2811_800kHz;
 OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
+
+AudioInputAnalog         adc1(A3);
+AudioAmplifier           amp1;
+AudioAnalyzeFFT256       fft256_1;
+AudioOutputMQS           mqs1;
+AudioConnection          patchCord1(adc1, amp1);
+AudioConnection          patchCord2(amp1, fft256_1);
+AudioConnection          patchCord3(amp1, 0, mqs1, 0);
+
 long previousTime = micros();
 
 Boot boot;
 Face face;
 
-const int MaxBrightness = 15;
+const int MaxBrightness = 10;
 
 Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &pixelString, true, false);
 Camera camRearTop = Camera(Vector3D(45, 0, 0),    Vector3D(90, 90, -500),    306, &pixelString, false, false);
@@ -61,10 +71,11 @@ void bootAnimation(){
 }
 
 void setup() {
+  AudioMemory(12);
+  amp1.gain(4.0);
+  
   leds.begin();
   leds.show();
-
-  pinMode(A3, INPUT);
 
   Serial.begin(115200);
   Serial.println();
@@ -78,6 +89,17 @@ void setup() {
 
 void loop() {
   for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
+    if (fft256_1.available()) {
+      for (int i=0; i < 10; i++) {  // print the first 20 bins
+        float fftOut = Mathematics::Constrain(fft256_1.read(i) * (400.0f - i * 30.0f) + 1.0f, 1.0f, 11.0f - i);
+        face.UpdateFFT(fftOut, 10 - i);
+        
+        //Serial.print(fftOut, 3);
+        //Serial.print(" ");
+      }
+      //Serial.println();
+    }
+    
     face.Update(i);
     face.FadeIn(0.0125f);
 

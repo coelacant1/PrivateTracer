@@ -49,3 +49,17 @@ float Mathematics::CosineInterpolation(float beg, float fin, float ratio){
    
    return(beg * (1.0f - mu2) + fin * mu2);
 }
+
+int Mathematics::RoundUpWindow(int value, int multiple){
+    if (multiple == 0)
+        return value;
+
+    int remainder = abs(value) % multiple;
+    if (remainder == 0)
+        return value;
+
+    if (value < 0)
+        return -(abs(value) - remainder);
+    else
+        return value + multiple - remainder;
+}
