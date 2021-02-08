@@ -127,6 +127,21 @@ private:
 public:
   Mouth(){}
 
+  Talk(float* pointMultiplier){// 12 inputs required
+    current3DObj.GetVertices()[0].Y = current3DObj.GetVertices()[0].Y + pointMultiplier[11];// top left
+    current3DObj.GetVertices()[11].Y = current3DObj.GetVertices()[11].Y + pointMultiplier[9];// right 1
+    current3DObj.GetVertices()[10].Y = current3DObj.GetVertices()[10].Y + pointMultiplier[7];// right 1
+    current3DObj.GetVertices()[9].Y = current3DObj.GetVertices()[9].Y + pointMultiplier[5];// right 1
+    current3DObj.GetVertices()[8].Y = current3DObj.GetVertices()[8].Y + pointMultiplier[3];// right 1
+    //current3DObj.GetVertices()[7].Y = current3DObj.GetVertices()[7].Y + pointMultiplier[1];// top right
+    //current3DObj.GetVertices()[6].Y = current3DObj.GetVertices()[6].Y - pointMultiplier[0];// top right
+    current3DObj.GetVertices()[5].Y = current3DObj.GetVertices()[5].Y - pointMultiplier[2];// top right
+    current3DObj.GetVertices()[4].Y = current3DObj.GetVertices()[4].Y - pointMultiplier[4];// top right
+    current3DObj.GetVertices()[3].Y = current3DObj.GetVertices()[3].Y - pointMultiplier[6];// top right
+    current3DObj.GetVertices()[2].Y = current3DObj.GetVertices()[2].Y - pointMultiplier[8];// top right
+    current3DObj.GetVertices()[1].Y = current3DObj.GetVertices()[1].Y - pointMultiplier[10];// top right
+  }
+
   Object3D* GetObject(){
     return &current3DObj;
   }

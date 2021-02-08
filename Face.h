@@ -20,7 +20,7 @@ private:
   Mouth mouthTest;
   const int frames = 720;
   
-  float fftData[10];
+  float fftData[12];
   
 public:
   Face(){
@@ -38,6 +38,10 @@ public:
     objects[4] = &fftPlaneObj;
   
     scene = new Scene(objects, lights, 5, 6);
+
+    for (int i=0; i < 12; i++) {  // print the first 20 bins
+      fftData[i] = 0.0f;
+    }
   }
 
   void FadeIn(float stepRatio){
@@ -104,7 +108,6 @@ public:
       objects[2]->Rotate(Vector3D(7 + sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 4.0f), Vector3D(0, 100, 0));
       objects[3]->Rotate(Vector3D(sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 4.0f), Vector3D(0, 100, 0));
     }
-
     
     objects[0]->Move(Vector3D(-35, 5, 0));
     objects[2]->Move(Vector3D(-40, 30, 0));
@@ -149,7 +152,8 @@ public:
     float h = sinf(i * 3.14159f / 180.0f * 30.0f);
     
     
-    fftDeformer.CosineInterpolationDeformer(fftData, 10, 10.0f, -200.0f, 200.0f, ObjectDeformer::XAxis, ObjectDeformer::YAxis);
+    //fftDeformer.CosineInterpolationDeformer(fftData, 10, 10.0f, -200.0f, 200.0f, ObjectDeformer::XAxis, ObjectDeformer::YAxis);
+    mouthTest.Talk(fftData);
 
     //objects[4]->Move(Vector3D(0.0f, 40.0f, 0.0f)); Vector3D(-110, 70, 0)
     objects[4]->Move(Vector3D(-110, 70, 0));
@@ -176,12 +180,61 @@ public:
     //lights[5].MoveTo(Vector3D(0, sinf(i * 3.14159f / 180.0f * 6.0f) * 1000.0f, -cosf(i * 3.14159f / 180.0f * 6.0f) * 1000.0f));
   }
 
+  void Default(float ratio){
+    ratio = Mathematics::Constrain(ratio, 0.0f, 1.0f);
+    int i = (int)(ratio * (float)frames);
+    
+    objects[0]->Enable();
+    objects[1]->Enable();
+    objects[2]->Enable();
+    objects[3]->Enable();
+    objects[4]->Disable();
+    
+    objects[0]->ResetVertices();
+    objects[2]->ResetVertices();
+    objects[4]->ResetVertices();
+    
+    if (i > 550){
+      eyeTest.Update(Eye::Sleepy, 0.03f);
+      mouthTest.Update(Mouth::Smirk, 0.05f);
+    }
+    else if (i > 400){
+      eyeTest.Update(Eye::Happy, 0.05f);
+      mouthTest.Update(Mouth::HappyRed, 0.03f);
+    }
+    else if (i > 200){
+      eyeTest.Update(Eye::Neutral, 0.07f);
+      mouthTest.Update(Mouth::Neutral, 0.1f);
+    }
+    else{
+      eyeTest.Update(Eye::Happy, 0.02f);
+      mouthTest.Update(Mouth::ClosedHappy, 0.03f);
+    }
+    
+    objects[0]->Rotate(Vector3D(3 + sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 4.0f), Vector3D(0, 100, 0));
+    objects[1]->Rotate(Vector3D(sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 4.0f), Vector3D(0, 100, 0));
+    objects[2]->Rotate(Vector3D(7 + sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 4.0f), Vector3D(0, 100, 0));
+    objects[3]->Rotate(Vector3D(sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 4.0f), Vector3D(0, 100, 0));
+    
+    objects[0]->Move(Vector3D(-35, 5, 0));
+    objects[2]->Move(Vector3D(-40, 30, 0));
+
+    //objects[2]->Scale(Vector3D(1.0f + sinf(i * 3.14159f / 180.0f * 1.0f) * 0.025f, 1.0f + sinf(i * 3.14159f / 180.0f * 10.0f) * 0.025f, 1.0f), Vector3D(0, 0, 0));
+    
+    sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 100.0f, sinf(-i * 3.14159f / 180.0f * 0.1f), 0.1f, 200.0f, ObjectDeformer::ZAxis);
+    sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 0.1f), 0.02f, 1.0f, ObjectDeformer::XAxis);
+
+  }
+
   void UpdateFFT(float value, int index){
     fftData[index] = value;
   }
 
   void Update(float ratio){
     //Boop(ratio);
-    Rave(ratio);
+    //Rave(ratio);
+    Default(ratio);
+    
+    mouthTest.Talk(fftData);
   }
 };
