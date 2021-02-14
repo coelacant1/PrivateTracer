@@ -50,7 +50,10 @@ public:
   MotionProcessor(){
     previousMicros = micros();
 
-    //Wire.setClock(1000);
+    pinMode(18, INPUT_PULLUP);
+    pinMode(19, INPUT_PULLUP);
+
+    //Wire.setClock(100000);
     if (!bno.begin())
     {
       Serial.println("No BNO055 detected");
