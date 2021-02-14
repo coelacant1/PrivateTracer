@@ -29,7 +29,8 @@ public:
 	Quaternion Divide(Quaternion quaternion);
 	Quaternion Divide(float scalar);
 	Quaternion Power(Quaternion quaternion);
-
+  Quaternion DeltaRotation(Vector3D angularVelocity, float timeDelta);
+  
 	Quaternion Power(float exponent);
 	Quaternion Permutate(Vector3D permutation);
 

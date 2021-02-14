@@ -150,6 +150,6 @@ public:
     Interpolate(e, rate);
 
     current3DObj.Rotate(offsetRotation);
-    current3DObj.Move(offsetPosition);
+    current3DObj.MoveRelative(offsetPosition);
   }
 };

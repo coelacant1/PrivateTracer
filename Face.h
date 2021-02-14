@@ -109,8 +109,8 @@ public:
       objects[3]->Rotate(Vector3D(sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 4.0f), Vector3D(0, 100, 0));
     }
     
-    objects[0]->Move(Vector3D(-35, 5, 0));
-    objects[2]->Move(Vector3D(-40, 30, 0));
+    objects[0]->MoveRelative(Vector3D(-35, 5, 0));
+    objects[2]->MoveRelative(Vector3D(-40, 30, 0));
 
     objects[2]->Scale(Vector3D(1.0f + sinf(i * 3.14159f / 180.0f * 1.0f) * 0.025f, 1.0f + sinf(i * 3.14159f / 180.0f * 10.0f) * 0.025f, 1.0f), Vector3D(0, 0, 0));
     
@@ -138,8 +138,8 @@ public:
     objects[2]->ResetVertices();
     objects[4]->ResetVertices();
     
-    objects[0]->Move(Vector3D(-35, 5, 0));
-    objects[2]->Move(Vector3D(-40, 30, 0));
+    objects[0]->MoveRelative(Vector3D(-35, 5, 0));
+    objects[2]->MoveRelative(Vector3D(-40, 30, 0));
     
     
     float a = sinf(i * 3.14159f / 180.0f * 7.0f);
@@ -156,7 +156,7 @@ public:
     mouthTest.Talk(fftData);
 
     //objects[4]->Move(Vector3D(0.0f, 40.0f, 0.0f)); Vector3D(-110, 70, 0)
-    objects[4]->Move(Vector3D(-110, 70, 0));
+    objects[4]->MoveRelative(Vector3D(-110, 70, 0));
     objects[4]->Rotate(Vector3D(0.0f, 0.0f, 45.0f), Vector3D(0, 50, 0));
 
     
@@ -216,8 +216,8 @@ public:
     objects[2]->Rotate(Vector3D(7 + sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 4.0f), Vector3D(0, 100, 0));
     objects[3]->Rotate(Vector3D(sinf(i * 3.14159f / 180.0f * 4.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 2.0f) * 4.0f), Vector3D(0, 100, 0));
     
-    objects[0]->Move(Vector3D(-35, 5, 0));
-    objects[2]->Move(Vector3D(-40, 30, 0));
+    objects[0]->MoveRelative(Vector3D(-35, 5, 0));
+    objects[2]->MoveRelative(Vector3D(-40, 30, 0));
 
     //objects[2]->Scale(Vector3D(1.0f + sinf(i * 3.14159f / 180.0f * 1.0f) * 0.025f, 1.0f + sinf(i * 3.14159f / 180.0f * 10.0f) * 0.025f, 1.0f), Vector3D(0, 0, 0));
     
@@ -228,6 +228,31 @@ public:
 
   void UpdateFFT(float value, int index){
     fftData[index] = value;
+  }
+
+  void Drift(Vector3D acceleration, Vector3D angularVelocity){
+    angularVelocity = angularVelocity.Divide(20);
+    angularVelocity = Vector3D(angularVelocity.Z, angularVelocity.Y, angularVelocity.X);
+    acceleration = acceleration.Multiply(7.5f);
+    Vector3D zMod = Vector3D(1.0f + acceleration.Z * 0.002f, 1.0f + acceleration.Z * 0.002f, 1.0f);
+    
+    objects[0]->Rotate(angularVelocity, Vector3D(0, 100, 0));
+    objects[1]->Rotate(angularVelocity, Vector3D(0, 100, 0));
+    objects[2]->Rotate(angularVelocity, Vector3D(0, 100, 0));
+    objects[3]->Rotate(angularVelocity, Vector3D(0, 100, 0));
+    objects[4]->Rotate(angularVelocity, Vector3D(0, 100, 0));
+    
+    objects[0]->MoveRelative(acceleration);
+    objects[1]->MoveRelative(acceleration);
+    objects[2]->MoveRelative(acceleration);
+    objects[3]->MoveRelative(acceleration);
+    objects[4]->MoveRelative(acceleration);
+
+    objects[0]->Scale(zMod, Vector3D(0, 100, 0));
+    objects[1]->Scale(zMod, Vector3D(0, 100, 0));
+    objects[2]->Scale(zMod, Vector3D(0, 100, 0));
+    objects[3]->Scale(zMod, Vector3D(0, 100, 0));
+    objects[4]->Scale(zMod, Vector3D(0, 100, 0));
   }
 
   void Update(float ratio){

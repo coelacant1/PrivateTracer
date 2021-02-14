@@ -91,6 +91,6 @@ public:
     Interpolate(e, rate);
 
     eye.Rotate(offsetRotation);
-    eye.Move(offsetPosition);
+    eye.MoveRelative(offsetPosition);
   }
 };

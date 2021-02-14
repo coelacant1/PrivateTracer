@@ -198,12 +198,22 @@ public:
     }
   }
 
-  void Move(Vector3D p){
+  void MoveRelative(Vector3D p){
     for (int i = 0; i < vertexLength; i++) {
       vertices[i] = vertices[i] + p;
     }
 
     this->p = p;
+  }
+  
+  void MoveAbsolute(Vector3D p){
+    Vector3D center = GetVertexCenter();
+
+    for (int i = 0; i < vertexLength; i++) {
+      vertices[i] = vertices[i] + p - center;
+    }
+    
+    this->p = p - center;
   }
 
 };

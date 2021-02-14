@@ -102,6 +102,22 @@ Quaternion Quaternion::SphericalInterpolation(Quaternion q1, Quaternion q2, floa
 	}
 }
 
+
+Quaternion Quaternion::DeltaRotation(Vector3D angularVelocity, float timeDelta){
+  Quaternion current = Quaternion(this->W, this->X, this->Y, this->Z);
+  Vector3D halfAngle = angularVelocity * (timeDelta / 2.0f);
+  float halfAngleLength = halfAngle.Magnitude();
+
+  if(halfAngleLength > 0.001f){//exponential map
+    halfAngle = halfAngle * (sinf(halfAngleLength) / halfAngleLength);
+    return (current * Quaternion(cosf(halfAngleLength), halfAngle.X, halfAngle.Y, halfAngle.Z)).UnitQuaternion();
+  }
+  else{//first taylor series
+    return (current * Quaternion(1.0f, halfAngle.X, halfAngle.Y, halfAngle.Z)).UnitQuaternion();
+  }
+}
+
+
 Quaternion Quaternion::Add(Quaternion quaternion) {
 	Quaternion current = Quaternion(this->W, this->X, this->Y, this->Z);
 

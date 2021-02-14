@@ -10,6 +10,7 @@ class Camera {
 private:
 	Quaternion q;
 	Vector3D p;
+  Vector3D pictureCenter;
   unsigned int pixelCount;
   Pixel* pixelStorage;
   PixelReader pixelReader;
@@ -77,7 +78,10 @@ private:
 public:
   Camera(Vector3D q, Vector3D p, unsigned int pixelCount, const String* pixelData, bool flipX, bool flipY) {
     pixelStorage = new Pixel[pixelCount];
-    pixelReader.GetPixels(pixelStorage, pixelCount, pixelData, flipX, flipY);
+    Vector2D pictureCenter;
+    pixelReader.GetPixels(pixelStorage, pixelCount, pixelData, pictureCenter, flipX, flipY);
+
+    this->pictureCenter = Vector3D(pictureCenter.X, pictureCenter.Y, 0);
     
     pixelPixelDistance = fabs(pixelStorage[0].X - pixelStorage[1].X);
 
@@ -92,7 +96,10 @@ public:
   
 	Camera(Quaternion q, Vector3D p, unsigned int pixelCount, const String* pixelData, bool flipX, bool flipY) {
     pixelStorage = new Pixel[pixelCount];
-    pixelReader.GetPixels(pixelStorage, pixelCount, pixelData, flipX, flipY);
+    Vector2D pictureCenter;
+    pixelReader.GetPixels(pixelStorage, pixelCount, pixelData, pictureCenter, flipX, flipY);
+    
+    this->pictureCenter = Vector3D(pictureCenter.X, pictureCenter.Y, 0);
     
     pixelPixelDistance = fabs(pixelStorage[0].X - pixelStorage[1].X);
 
@@ -124,6 +131,11 @@ public:
 
   Pixel* GetPixels(){
     return pixelStorage;
+  }
+
+  Vector3D GetPictureCenter(){
+    Serial.println(pictureCenter.ToString());
+    return q.RotateVector(pictureCenter) + p;
   }
 
 	void Translate(Quaternion q, Vector3D p) {
@@ -180,7 +192,7 @@ public:
       if(scene->objects[i]->IsEnabled()){
         //for each triangle in object, project onto 2d surface
         for (int j = 0; j < scene->objects[i]->GetTriangleAmount(); j++) {
-          scene->objects[i]->GetTriangles()[i].Normal();
+          scene->objects[i]->GetTriangles()[j].Normal();
           triangles[triangleCounter] = new Triangle2D(q, p, scene->objects[i]->GetTriangles()[j]);
           triangleCounter++;
         }

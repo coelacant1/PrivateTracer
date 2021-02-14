@@ -76,12 +76,7 @@ public:
     w = (v0.X * v2Y - v2X * v0.Y) * denominator;
 		u = 1.0f - v - w;
 
-    if (u > 0 && v > 0 && w > 0){
-      return true;
-    }
-    else{
-      return false;
-    }
+    return u > 0 && v > 0 && w > 0;
 	}
 
 	String ToString() {

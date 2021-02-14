@@ -8,6 +8,9 @@
 #include "ObjectDeformer.h"
 #include "Boot.h"
 #include "Face.h"
+#include "MotionProcessor.h"
+
+MotionProcessor motionProcessor;
 
 const int ledsPerStrip = 306;
 DMAMEM int displayMemory[ledsPerStrip * 6];
@@ -107,11 +110,15 @@ void loop() {
         //Serial.print(fftOut, 3);
         //Serial.print(" ");
       }
-     //Serial.println();
     }
+    
+    motionProcessor.Update();
+
+    //Serial.println(camRearTop.GetPictureCenter().ToString());
     
     face.Update(i);
     face.FadeIn(0.0125f);
+    face.Drift(motionProcessor.GetLocalAcceleration(), motionProcessor.GetLocalAngularVelocity());
 
     updateLEDs(face.GetScene());
     Serial.print(i);

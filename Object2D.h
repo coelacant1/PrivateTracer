@@ -194,12 +194,21 @@ public:
     }
   }
 
-  void Move(Vector2D p){
+  void MoveRelative(Vector2D p){
     for (int i = 0; i < vertexLength; i++) {
       vertices[i] = vertices[i] + p;
     }
 
     this->p = p;
   }
+  
+  void MoveAbsolute(Vector2D p){
+    Vector2D center = GetVertexCenter();
 
+    for (int i = 0; i < vertexLength; i++) {
+      vertices[i] = vertices[i] + p - center;
+    }
+    
+    this->p = p - center;
+  }
 };

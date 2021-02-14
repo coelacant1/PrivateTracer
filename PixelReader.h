@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Vector2D.h"
 #include "Vector3D.h"
 #include "Pixel.h"
 
@@ -36,13 +37,15 @@ private:
 public:
 	PixelReader() {}
 
-	void GetPixels(Pixel* pixels, unsigned int count, const String* value, bool flipX, bool flipY) {
+	void GetPixels(Pixel* pixels, unsigned int count, const String* value, Vector2D &pictureCenter, bool flipX, bool flipY) {
 		String line;
+
+    Vector2D avgCoords;
 
 		for (unsigned int i = 0; i < countChar(*value, '\n') + 1; i++) {
 			line = getValue(*value, '\n', i);
      
-      if(i > count) break;//maxed out pixels available to memory, cancel reading
+      if (i > count) break;//maxed out pixels available to memory, cancel reading
 
 			if (countChar(line, ',') > 2) {
 				float x, y;
@@ -57,9 +60,13 @@ public:
           y = -y;
         }
 
+        avgCoords = avgCoords + Vector2D(x, y);
+
 				pixels[i] = Pixel(x, y);
 			}
 		}
+
+    pictureCenter = avgCoords.Divide(count);
 	}
 
 	void GetPixels(Pixel* pixels, int width, int height){

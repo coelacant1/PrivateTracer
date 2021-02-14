@@ -101,7 +101,7 @@ public:
       objects[6]->Disable();
       
       objects[0]->Scale(Vector3D(-1, 1, 1));
-      objects[0]->Move(Vector3D(120, 70, 0));
+      objects[0]->MoveRelative(Vector3D(120, 70, 0));
     } else if (i < 270){//init
       objects[0]->Disable();
       objects[1]->Enable();
@@ -112,7 +112,7 @@ public:
       objects[6]->Disable();
 
       objects[1]->Scale(Vector3D(-1, 1, 1));
-      objects[1]->Move(Vector3D(120, 70, 0));
+      objects[1]->MoveRelative(Vector3D(120, 70, 0));
     } else if (i < 360){//done
       objects[0]->Disable();
       objects[1]->Disable();
@@ -123,7 +123,7 @@ public:
       objects[6]->Disable();
 
       objects[4]->Scale(Vector3D(-1, 1, 1));
-      objects[4]->Move(Vector3D(120, 70, 0));
+      objects[4]->MoveRelative(Vector3D(120, 70, 0));
     } else if (i < 540){//cursor blink and transform
       objects[0]->Disable();
       objects[1]->Disable();
@@ -134,7 +134,7 @@ public:
       objects[6]->Disable();
 
       objects[5]->Scale(Vector3D(-1, 1, 1));
-      objects[5]->Move(Vector3D(120, 82, 0));
+      objects[5]->MoveRelative(Vector3D(120, 82, 0));
     } else if (i < 900){//cursor blink and transform
       float ratio = Mathematics::CosineInterpolation(0.0f, 1.0f, ((float)(i - 540)) / 360.0f);
       
@@ -143,7 +143,7 @@ public:
       Vector3D rotation = Vector3D::LERP(Vector3D(0, 0, 0), Vector3D(0, 90, 0), ratio);
       
       objects[5]->ScaleCenter(scale);
-      objects[5]->Move(pos);
+      objects[5]->MoveRelative(pos);
       objects[5]->RotateCenter(rotation);
     } else if (i < 1260){//plane
       objects[0]->Disable();
@@ -170,7 +170,7 @@ public:
   
       objects[6]->Scale(Vector3D(s1, 1.0f - s2, s3), Vector3D(0, 0, 0));
       objects[6]->Rotate(Vector3D(cs + 45.0f, xs + 90.0f, zs), Vector3D(0, 100, 0));
-      objects[6]->Move(Vector3D(-40, 10, 0));
+      objects[6]->MoveRelative(Vector3D(-40, 10, 0));
     }
   }
 };

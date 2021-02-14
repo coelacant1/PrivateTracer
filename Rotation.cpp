@@ -20,6 +20,10 @@ Rotation::Rotation(RotationMatrix rotationMatrix) {
 	QuaternionRotation = RotationMatrixToQuaternion(rotationMatrix);
 }
 
+Rotation::Rotation(Vector3D X, Vector3D Y, Vector3D Z){
+  QuaternionRotation = RotationMatrixToQuaternion(X, Y, Z);
+}
+
 Rotation::Rotation(EulerAngles eulerAngles) {
 	QuaternionRotation = EulerAnglesToQuaternion(eulerAngles);
 }
@@ -67,53 +71,53 @@ Quaternion Rotation::DirectionAngleToQuaternion(DirectionAngle directionAngle) {
 }
 
 Quaternion Rotation::RotationMatrixToQuaternion(RotationMatrix rM) {
-	Quaternion q = Quaternion();
+	return RotationMatrixToQuaternion(rM.XAxis, rM.YAxis, rM.ZAxis);
+}
 
-	Vector3D X = Vector3D(rM.XAxis);
-	Vector3D Y = Vector3D(rM.YAxis);
-	Vector3D Z = Vector3D(rM.ZAxis);
+Quaternion Rotation::RotationMatrixToQuaternion(Vector3D X, Vector3D Y, Vector3D Z){
+  Quaternion q = Quaternion();
+  
+  float matrixTrace = X.X + Y.Y + Z.Z;
+  float square;
 
-	float matrixTrace = X.X + Y.Y + Z.Z;
-	float square;
+  if (matrixTrace > 0)//standard procedure
+  {
+    square = sqrtf(1.0f + matrixTrace) * 2.0f;//4 * qw
 
-	if (matrixTrace > 0)//standard procedure
-	{
-		square = sqrtf(1.0f + matrixTrace) * 2.0f;//4 * qw
+    q.W = 0.25f * square;
+    q.X = (Z.Y - Y.Z) / square;
+    q.Y = (X.Z - Z.X) / square;
+    q.Z = (Y.X - X.Y) / square;
+  }
+  else if ((X.X > Y.Y) && (X.X > Z.Z))
+  {
+    square = sqrtf(1.0f + X.X - Y.Y - Z.Z) * 2.0f;//4 * qx
 
-		q.W = 0.25f * square;
-		q.X = (Z.Y - Y.Z) / square;
-		q.Y = (X.Z - Z.X) / square;
-		q.Z = (Y.X - X.Y) / square;
-	}
-	else if ((X.X > Y.Y) && (X.X > Z.Z))
-	{
-		square = sqrtf(1.0f + X.X - Y.Y - Z.Z) * 2.0f;//4 * qx
+    q.W = (Z.Y - Y.Z) / square;
+    q.X = 0.25f * square;
+    q.Y = (X.Y + Y.X) / square;
+    q.Z = (X.Z + Z.X) / square;
+  }
+  else if (Y.Y > Z.Z)
+  {
+    square = sqrtf(1.0f + Y.Y - X.X - Z.Z) * 2.0f;//4 * qy
 
-		q.W = (Z.Y - Y.Z) / square;
-		q.X = 0.25f * square;
-		q.Y = (X.Y + Y.X) / square;
-		q.Z = (X.Z + Z.X) / square;
-	}
-	else if (Y.Y > Z.Z)
-	{
-		square = sqrtf(1.0f + Y.Y - X.X - Z.Z) * 2.0f;//4 * qy
+    q.W = (X.Z - Z.X) / square;
+    q.X = (X.Y + Y.X) / square;
+    q.Y = 0.25f * square;
+    q.Z = (Y.Z + Z.Y) / square;
+  }
+  else
+  {
+    square = sqrtf(1.0f + Z.Z - X.X - Y.Y) * 2.0f;//4 * qz
 
-		q.W = (X.Z - Z.X) / square;
-		q.X = (X.Y + Y.X) / square;
-		q.Y = 0.25f * square;
-		q.Z = (Y.Z + Z.Y) / square;
-	}
-	else
-	{
-		square = sqrtf(1.0f + Z.Z - X.X - Y.Y) * 2.0f;//4 * qz
+    q.W = (Y.X - X.Y) / square;
+    q.X = (X.Z + Z.X) / square;
+    q.Y = (Y.Z + Z.Y) / square;
+    q.Z = 0.25f * square;
+  }
 
-		q.W = (Y.X - X.Y) / square;
-		q.X = (X.Z + Z.X) / square;
-		q.Y = (Y.Z + Z.Y) / square;
-		q.Z = 0.25f * square;
-	}
-
-	return q.UnitQuaternion().Conjugate();
+  return q.UnitQuaternion().Conjugate();
 }
 
 Quaternion Rotation::EulerAnglesToQuaternion(EulerAngles eulerAngles) {
