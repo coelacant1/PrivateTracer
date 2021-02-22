@@ -1,4 +1,4 @@
-String protoDRV1String = 
+const String protoDRV1String = 
 "v 8.940000 18.000000 0.000000\n"
 "v 22.499973 18.003750 0.000000\n"
 "v 22.499973 22.496250 0.000000\n"
@@ -252,7 +252,7 @@ String protoDRV1String =
 "f 104 103 105\n"
 "f 126 125 119";
 
-String initString = 
+const String initString = 
 "v 9.000000 36.000000 0.000000\n"
 "v 9.003750 4.496250 0.000000\n"
 "v 0.003750 4.496250 0.000000\n"
@@ -366,7 +366,7 @@ String initString =
 "f 30 29 23\n"
 "f 37 52 38";
 
-String runningKernelString =
+const String runningKernelString =
 "v 8.940000 18.000000 0.000000\n"
 "v 18.003750 18.003750 0.000000\n"
 "v 18.003750 0.003749 0.000000\n"
@@ -828,7 +828,7 @@ String runningKernelString =
 "f 195 194 196\n"
 "f 228 227 221";
 
-String loadingModulesString =
+const String loadingModulesString =
 "v 8.940000 4.440000 0.000000\n"
 "v 8.996250 40.496251 0.000000\n"
 "v 0.003750 40.496251 0.000000\n"
@@ -1276,7 +1276,7 @@ String loadingModulesString =
 "f 174 173 175\n"
 "f 220 219 195";
 
-String doneBootString = 
+const String doneBootString = 
 "v 22.440000 4.440000 0.000000\n"
 "v 26.996250 4.496250 0.000000\n"
 "v 26.996250 36.003750 0.000000\n"

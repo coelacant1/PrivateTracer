@@ -15,6 +15,7 @@ public:
 	static bool IsFinite(float);
 	static int Sign(float);
   static int RoundUpWindow(int value, int multiple);
+  static float Map(float value, float inLow, float inMax, float outMin, float outMax);
 
   static float CosineInterpolation(float, float, float);
 };

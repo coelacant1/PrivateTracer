@@ -1,6 +1,6 @@
 #pragma once
 
-String pixelString =
+const String pixelString =
 "U1,20,5,1\n"
 "U2,27,5,2\n"
 "U3,34,5,3\n"
@@ -308,7 +308,7 @@ String pixelString =
 "U305,27,110,305\n"
 "U306,6,117,306";
 /*
-String cam2String =
+const String cam2String =
 "U1,129.6388,28.6312,1\n"
 "U2,134.6388,28.6312,2\n"
 "U3,139.6388,28.6312,3\n"

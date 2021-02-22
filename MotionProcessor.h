@@ -21,6 +21,7 @@ private:
 
   VectorKalmanFilter localAngulKF = VectorKalmanFilter(0.05f, 25);
   VectorKalmanFilter localAccelKF = VectorKalmanFilter(0.05f, 25);
+  VectorKalmanFilter localGraviKF = VectorKalmanFilter(0.05f, 25);
 
   Vector3D ReadMagneticField(){
     bno.getEvent(&magnetometerData, Adafruit_BNO055::VECTOR_MAGNETOMETER);
@@ -106,7 +107,7 @@ public:
     //complementary filter join both the gyro integration to angular position with the absolute orientation from mag and force
     absoluteOrientation = Quaternion::SphericalInterpolation(absoluteOrientation.DeltaRotation(localAngularVelocity, dT), magForceQ, 0.05f);
 
-    localAcceleration = localForce - localGravityVector;
+    localAcceleration = localForce - localGraviKF.Filter(localGravityVector);
     
     previousMicros = micros();
   }

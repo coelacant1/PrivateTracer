@@ -212,9 +212,9 @@ public:
 
       color = color.Divide(255.0f / maxBrightness).Constrain(0.0f, maxBrightness);
 
-      pixelStorage[i].R = color.X;
-      pixelStorage[i].G = color.Y;
-      pixelStorage[i].B = color.Z;
+      pixelStorage[i].Color.R = color.X;
+      pixelStorage[i].Color.G = color.Y;
+      pixelStorage[i].Color.B = color.Z;
 		}
 
     for (int i = 0; i < triangleCounter; i++){

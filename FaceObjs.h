@@ -1,4 +1,4 @@
-String faceString =
+const String faceString =
 "v 12.406978 176.473599 -60.940156\n"
 "v -13.495444 203.225280 -32.561117\n"
 "v 127.057043 280.083286 -106.148502\n"
@@ -64,7 +64,7 @@ String faceString =
 "f 36 35 48\n"
 "f 38 37 34";
 
-String eyeString =
+const String eyeString =
 "v -38.122004 149.989800 -49.141829\n"
 "v -81.011592 95.342987 -61.269273\n"
 "v 8.585310 126.340967 -82.794173\n"
@@ -74,7 +74,7 @@ String eyeString =
 "v -38.122004 149.989800 49.141829\n"
 "f 4 6 5";
 
-String eyeBrowString =
+const String eyeBrowString =
 "v -84.408631 113.203749 -44.554657\n"
 "v -43.219534 158.564621 -40.349482\n"
 "v -65.169523 163.970403 -22.995366\n"
@@ -84,7 +84,7 @@ String eyeBrowString =
 "v -65.169523 163.970403 22.995366\n"
 "f 5 4 6";
 
-String mouthString =
+const String mouthString =
 "v 20.474946 75.836320 -73.014871\n"
 "v -9.673775 53.330937 -65.000000\n"
 "v -7.550625 22.757587 -53.506088\n"
@@ -114,7 +114,7 @@ String mouthString =
 "f 9 16 11\n"
 "f 15 16 9";
 
-String fftPlaneString = 
+const String fftPlaneString = 
 "v -186.327641 0.000000 10.000000\n"
 "v -159.660973 0.000000 10.000000\n"
 "v -132.994305 0.000000 10.000000\n"

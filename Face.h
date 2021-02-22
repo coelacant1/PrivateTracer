@@ -231,10 +231,11 @@ public:
   }
 
   void Drift(Vector3D acceleration, Vector3D angularVelocity){
-    angularVelocity = angularVelocity.Divide(20);
-    angularVelocity = Vector3D(angularVelocity.Z, angularVelocity.Y, angularVelocity.X);
-    acceleration = acceleration.Multiply(7.5f);
-    Vector3D zMod = Vector3D(1.0f + acceleration.Z * 0.002f, 1.0f + acceleration.Z * 0.002f, 1.0f);
+    angularVelocity = angularVelocity.Divide(10);
+    angularVelocity = Vector3D(-angularVelocity.X, -angularVelocity.Z, angularVelocity.Y);
+    acceleration = acceleration.Multiply(15);
+    acceleration = Vector3D(acceleration.Y, acceleration.Z, acceleration.X);
+    Vector3D zMod = Vector3D(1.0f + acceleration.Z * 0.005f, 1.0f + acceleration.Z * 0.005f, 1.0f);
     
     objects[0]->Rotate(angularVelocity, Vector3D(0, 100, 0));
     objects[1]->Rotate(angularVelocity, Vector3D(0, 100, 0));

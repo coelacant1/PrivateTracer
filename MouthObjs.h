@@ -1,4 +1,4 @@
-String neutralString = 
+const String neutralString = 
 "v 76.704979 -31.432622 0.000000\n"
 "v 46.445217 -43.395783 0.212303\n"
 "v 17.592885 -53.951515 0.000000\n"
@@ -22,7 +22,7 @@ String neutralString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String closedHappyString =
+const String closedHappyString =
 "v 75.875962 -36.614125 0.000000\n"
 "v 67.789185 -44.432239 0.000000\n"
 "v 18.431963 -50.947334 0.000000\n"
@@ -46,7 +46,7 @@ String closedHappyString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String openHappyString =
+const String openHappyString =
 "v 85.261539 -26.892863 0.000000\n"
 "v 57.519475 -53.877439 0.000000\n"
 "v 15.766269 -52.258365 0.000000\n"
@@ -70,7 +70,7 @@ String openHappyString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String confuseString =
+const String confuseString =
 "v 82.800949 -31.198050 0.000000\n"
 "v 63.633617 -46.445217 0.000000\n"
 "v 12.811147 -57.939235 0.000000\n"
@@ -94,7 +94,7 @@ String confuseString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String confusionString = 
+const String confusionString = 
 "v 74.124690 -38.235204 0.000000\n"
 "v 57.000948 -54.889802 0.000000\n"
 "v 44.099499 -60.050381 0.000000\n"
@@ -118,7 +118,7 @@ String confusionString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String angryString =
+const String angryString =
 "v 68.440292 -44.334071 0.000000\n"
 "v 57.709954 -53.482371 0.000000\n"
 "v 22.767574 -54.420658 0.000000\n"
@@ -142,7 +142,7 @@ String angryString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String poggersString =
+const String poggersString =
 "v 79.540158 -32.276353 0.000000\n"
 "v 57.697275 -54.611589 0.000000\n"
 "v 49.319183 -58.071977 0.000000\n"
@@ -166,7 +166,7 @@ String poggersString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String monchString =
+const String monchString =
 "v 78.707277 -33.008186 0.000000\n"
 "v 59.332740 -52.392582 0.000000\n"
 "v 39.958204 -53.484661 0.000000\n"
@@ -190,7 +190,7 @@ String monchString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String derpyString =
+const String derpyString =
 "v 74.124690 -38.235204 0.000000\n"
 "v 63.334387 -48.790935 0.000000\n"
 "v 46.679789 -52.778656 0.000000\n"
@@ -214,7 +214,7 @@ String derpyString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String shockedString =
+const String shockedString =
 "v 86.185881 -24.714635 0.000000\n"
 "v 59.402683 -53.576097 0.000000\n"
 "v 43.035173 -53.576097 0.000000\n"
@@ -238,7 +238,7 @@ String shockedString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String happyRedString =
+const String happyRedString =
 "v 74.171604 -38.042334 0.000000\n"
 "v 64.976389 -47.334852 0.000000\n"
 "v 51.183567 -38.706085 0.000000\n"
@@ -262,7 +262,7 @@ String happyRedString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String angelString =
+const String angelString =
 "v 71.075256 -40.815494 0.000000\n"
 "v 64.976389 -47.334852 0.000000\n"
 "v 47.618076 -49.963794 0.000000\n"
@@ -286,7 +286,7 @@ String angelString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String superHappyString =
+const String superHappyString =
 "v 85.140876 -27.679473 0.000000\n"
 "v 63.143254 -48.790935 0.000000\n"
 "v 40.233408 -48.321791 0.000000\n"
@@ -310,7 +310,7 @@ String superHappyString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String smirkString =
+const String smirkString =
 "v 80.185045 -31.962241 0.000000\n"
 "v 68.929099 -43.291326 0.000000\n"
 "v 27.397636 -24.787642 0.000000\n"
@@ -334,7 +334,7 @@ String smirkString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String ohNoString =
+const String ohNoString =
 "v 75.436415 -36.827773 0.000000 \n"
 "v 56.013870 -55.593517 0.000000\n"
 "v 26.217621 -55.358945 0.000000\n"
@@ -358,7 +358,7 @@ String ohNoString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String lemmeInString =
+const String lemmeInString =
 "v 81.656445 -29.234193 0.000000\n"
 "v 56.571809 -56.629997 0.000000\n"
 "v 48.398163 -50.149269 0.000000\n"
@@ -382,7 +382,7 @@ String lemmeInString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String howString =
+const String howString =
 "v 86.765503 -25.429716 0.000000\n"
 "v 54.822781 -57.736650 0.000000\n"
 "v 41.206447 -48.620337 0.000000\n"
@@ -406,7 +406,7 @@ String howString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String seriouslyString =
+const String seriouslyString =
 "v 61.457812 -50.667509 0.000000 \n"
 "v 57.000948 -54.655230 0.000000\n"
 "v 30.494334 -50.667509 0.000000\n"
@@ -430,7 +430,7 @@ String seriouslyString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String doneString =
+const String doneString =
 "v 63.163789 -49.646432 0.000000\n"
 "v 57.086247 -54.513797 0.000000\n"
 "v -7.207752 -57.949584 0.000000\n"
@@ -454,7 +454,7 @@ String doneString =
 "f 8 9 7\n"
 "f 1 2 12";
 
-String mlemString =
+const String mlemString =
 "v 77.643267 -34.247483 0.000000\n"
 "v 64.507246 -47.383504 0.000000\n"
 "v 55.358945 -52.544084 0.000000\n"

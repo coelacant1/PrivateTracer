@@ -50,6 +50,10 @@ float Mathematics::CosineInterpolation(float beg, float fin, float ratio){
    return(beg * (1.0f - mu2) + fin * mu2);
 }
 
+float Mathematics::Map(float value, float inLow, float inMax, float outMin, float outMax){
+  return (value - inLow) * (outMax - outMin) / (inMax - inLow) + outMin;
+}
+
 int Mathematics::RoundUpWindow(int value, int multiple){
     if (multiple == 0)
         return value;

@@ -9,6 +9,8 @@
 #include "Boot.h"
 #include "Face.h"
 #include "MotionProcessor.h"
+#include "BMP.h"
+#include "BMPImages.h"
 
 MotionProcessor motionProcessor;
 
@@ -34,7 +36,9 @@ long previousTime = micros();
 Boot boot;
 Face face;
 
-const int MaxBrightness = 10;
+BMP testBMP = BMP(Vector2D(100, 100), Vector2D(-50, 0), protoTest);
+
+const int MaxBrightness = 20;
 
 Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &pixelString, true, false);
 Camera camRearTop = Camera(Vector3D(45, 0, 0),    Vector3D(90, 90, -500),    306, &pixelString, false, false);
@@ -57,10 +61,10 @@ void updateLEDs(Scene* scene){
   camRearBot.Rasterize(scene, 1.0f, MaxBrightness);
   
   for (int i = 0; i < 306; i++) {
-    leds.setPixel(i,       camFronTop.GetPixels()[i].R, camFronTop.GetPixels()[i].G, camFronTop.GetPixels()[i].B);
-    leds.setPixel(i + 306, camRearTop.GetPixels()[i].R, camRearTop.GetPixels()[i].G, camRearTop.GetPixels()[i].B);
-    leds.setPixel(i + 612, camFronBot.GetPixels()[i].R, camFronBot.GetPixels()[i].G, camFronBot.GetPixels()[i].B);
-    leds.setPixel(i + 918, camRearBot.GetPixels()[i].R, camRearBot.GetPixels()[i].G, camRearBot.GetPixels()[i].B);
+    leds.setPixel(i + 1224, camFronTop.GetPixels()[i].Color.R, camFronTop.GetPixels()[i].Color.G, camFronTop.GetPixels()[i].Color.B);
+    leds.setPixel(i + 306, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);
+    leds.setPixel(i + 612, camFronBot.GetPixels()[i].Color.R, camFronBot.GetPixels()[i].Color.G, camFronBot.GetPixels()[i].Color.B);
+    leds.setPixel(i + 918, camRearBot.GetPixels()[i].Color.R, camRearBot.GetPixels()[i].Color.G, camRearBot.GetPixels()[i].Color.B);
   }
   
   leds.show();
@@ -119,6 +123,8 @@ void loop() {
     face.Update(i);
     face.FadeIn(0.0125f);
     face.Drift(motionProcessor.GetLocalAcceleration(), motionProcessor.GetLocalAngularVelocity());
+
+    //Serial.println(motionProcessor.GetLocalAngularVelocity().ToString());
 
     updateLEDs(face.GetScene());
     Serial.print(i);
