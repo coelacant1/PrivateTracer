@@ -36,7 +36,7 @@ long previousTime = micros();
 Boot boot;
 Face face;
 
-BMP testBMP = BMP(Vector2D(100, 100), Vector2D(-50, 0), protoTest);
+BMP testBMP = BMP(Vector2D(200, 200), Vector2D(-100, 0), protoTest);
 
 const int MaxBrightness = 20;
 
@@ -59,6 +59,23 @@ void updateLEDs(Scene* scene){
   camRearTop.Rasterize(scene, 1.0f, MaxBrightness);
   camFronBot.Rasterize(scene, 1.0f, MaxBrightness);
   camRearBot.Rasterize(scene, 1.0f, MaxBrightness);
+  
+  for (int i = 0; i < 306; i++) {
+    leds.setPixel(i + 1224, camFronTop.GetPixels()[i].Color.R, camFronTop.GetPixels()[i].Color.G, camFronTop.GetPixels()[i].Color.B);
+    leds.setPixel(i + 306, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);
+    leds.setPixel(i + 612, camFronBot.GetPixels()[i].Color.R, camFronBot.GetPixels()[i].Color.G, camFronBot.GetPixels()[i].Color.B);
+    leds.setPixel(i + 918, camRearBot.GetPixels()[i].Color.R, camRearBot.GetPixels()[i].Color.G, camRearBot.GetPixels()[i].Color.B);
+  }
+  
+  leds.show();
+  printRenderTime();
+}
+
+void updateLEDs(BMP* bmp){
+  camFronTop.BMPRasterize(bmp, 1.0f, MaxBrightness);
+  camRearTop.BMPRasterize(bmp, 1.0f, MaxBrightness);
+  camFronBot.BMPRasterize(bmp, 1.0f, MaxBrightness);
+  camRearBot.BMPRasterize(bmp, 1.0f, MaxBrightness);
   
   for (int i = 0; i < 306; i++) {
     leds.setPixel(i + 1224, camFronTop.GetPixels()[i].Color.R, camFronTop.GetPixels()[i].Color.G, camFronTop.GetPixels()[i].Color.B);
@@ -101,6 +118,7 @@ void setup() {
 }
 
 void loop() {
+  /*
   for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
     if (fft256_1.available()) {
       for (int i=4; i < 16; i++) {  // print the first 20 bins
@@ -130,4 +148,19 @@ void loop() {
     Serial.print(i);
     Serial.print(" ");
   }
+  */
+  
+  for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
+    updateLEDs(&testBMP);
+    Serial.print(i);
+    Serial.print(" ");
+  }
+  
+  /*
+  for (int y = 0; y <= 200; y += 3){
+    for (int x = -100; x <= 100; x += 3){
+      testBMP.GetRGB(Vector2D(x, y));
+    }
+  }
+  */
 }

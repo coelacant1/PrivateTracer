@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BMP.h"
 #include "Rotation.h"
 #include "Pixel.h"
 #include "PixelReader.h"
@@ -223,5 +224,32 @@ public:
     
 		delete[] triangles;
 	}
+ float moveBMP = 0;
 
+ void BMPRasterize(BMP *bmpImage, float scale, uint8_t maxBrightness){
+    for (unsigned int i = 0; i < pixelCount; i++) {
+      Vector3D camV = p;
+      //camV.X = -camV.X;
+      //camV.Y = -camV.Y;
+      
+      Quaternion temp;// = Rotation(EulerAngles(Vector3D(0, 0, moveBMP / 4.0f), EulerConstants::EulerOrderXYZS)).GetQuaternion();
+
+      float xpos, ypos, modifier = 1.0f;
+
+      xpos = sinf(moveBMP * 3.14159f / 180.0f * 1.0f) * 25.0f;
+      ypos = cosf(moveBMP * 3.14159f / 180.0f * 4.0f) * 10.0f + 25.0f;
+      //modifier = 1.5f + sinf(moveBMP * 3.14159f / 180.0f * 4.0f) * 0.5f;
+      
+      //Vector2D(camQ.UnrotateVector(Vector3D(*t.p1)) - camV);
+      Vector3D rotateRay = q.RotateVector(Vector3D(pixelStorage[i].X, pixelStorage[i].Y, 0).Subtract(camV)).Add(Vector3D(-xpos, -ypos, 0));//.Add(camV);
+
+      rotateRay = temp.RotateVector(rotateRay);
+      
+      Vector2D pixelRay = Vector2D(rotateRay.X * scale, rotateRay.Y * scale) * modifier;
+
+      pixelStorage[i].Color = bmpImage->GetRGB(pixelRay).Scale(maxBrightness);
+    }
+    
+    moveBMP++;
+ }
 };

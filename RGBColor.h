@@ -23,6 +23,24 @@ class RGBColor{
       this->G = rgbColor.G;
       this->B = rgbColor.B;
     }
+
+    RGBColor Scale(uint8_t maxBrightness){
+      int sR, sG, sB;
+      
+      sR = (int)R * (int)maxBrightness / 255;
+      sG = (int)G * (int)maxBrightness / 255;
+      sB = (int)B * (int)maxBrightness / 255;
+      
+      sR = sR > 255 ? 255 : sR;
+      sG = sG > 255 ? 255 : sG;
+      sB = sB > 255 ? 255 : sB;
+      
+      sR = sR < 0 ? 0 : sR;
+      sG = sG < 0 ? 0 : sG;
+      sB = sB < 0 ? 0 : sB;
+      
+      return RGBColor(sR, sG, sB);
+    }
     
     String ToString(){
       String r = String(this->R);
