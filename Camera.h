@@ -232,24 +232,26 @@ public:
       //camV.X = -camV.X;
       //camV.Y = -camV.Y;
       
-      Quaternion temp;// = Rotation(EulerAngles(Vector3D(0, 0, moveBMP / 4.0f), EulerConstants::EulerOrderXYZS)).GetQuaternion();
+      Quaternion temp = Rotation(EulerAngles(Vector3D(0, 0, -15), EulerConstants::EulerOrderXYZS)).GetQuaternion();
 
       float xpos, ypos, modifier = 1.0f;
 
-      xpos = sinf(moveBMP * 3.14159f / 180.0f * 1.0f) * 25.0f;
-      ypos = cosf(moveBMP * 3.14159f / 180.0f * 4.0f) * 10.0f + 25.0f;
-      //modifier = 1.5f + sinf(moveBMP * 3.14159f / 180.0f * 4.0f) * 0.5f;
+      xpos = sinf(moveBMP * 3.14159f / 180.0f * 1.9f) * 30.0f;
+      ypos = cosf(moveBMP * 3.14159f / 180.0f * 2.5f) * 30.0f;
+      modifier = 0.9f + sinf(moveBMP * 3.14159f / 180.0f * 4.0f) * 0.1f;
       
       //Vector2D(camQ.UnrotateVector(Vector3D(*t.p1)) - camV);
-      Vector3D rotateRay = q.RotateVector(Vector3D(pixelStorage[i].X, pixelStorage[i].Y, 0).Subtract(camV)).Add(Vector3D(-xpos, -ypos, 0));//.Add(camV);
+      Vector3D rotateRay = q.RotateVector(Vector3D(pixelStorage[i].X, pixelStorage[i].Y, 0).Subtract(camV)).Add(Vector3D(-xpos, -ypos, 0));
 
       rotateRay = temp.RotateVector(rotateRay);
       
-      Vector2D pixelRay = Vector2D(rotateRay.X * scale, rotateRay.Y * scale) * modifier;
+      Vector2D pixelRay = Vector2D(-rotateRay.X * scale, rotateRay.Y * scale) * modifier;
 
       pixelStorage[i].Color = bmpImage->GetRGB(pixelRay).Scale(maxBrightness);
     }
     
-    moveBMP++;
+    moveBMP += 0.5f;
+
+    if (moveBMP > 5000) moveBMP = 0;
  }
 };

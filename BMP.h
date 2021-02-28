@@ -64,22 +64,29 @@ public:
 
     xPosition = Mathematics::Map(xyPosition.X, offsetPosition.X, imageSize.X + 1 + offsetPosition.X, 0, xPixels);//scale to fit image size
     yPosition = Mathematics::Map(xyPosition.Y, offsetPosition.Y, imageSize.Y + 1 + offsetPosition.Y, 0, yPixels);
-    
+    /*
     Serial.print(xyPosition.ToString());
-    Serial.print(" ");
+    Serial.print("\t");
     Serial.print(xPosition);
-    Serial.print(" ");
+    Serial.print("\t");
     Serial.print(yPosition);
-    
+    */
     //map xy to to imagesize with offset position
-    if (xPosition < 0 || xPosition > xPixels) return RGBColor(0, 0, 0);
-    if (yPosition < 0 || yPosition > yPixels) return RGBColor(0, 0, 0);
+    if (xPosition < 0 || xPosition > xPixels - 1) return RGBColor(0, 0, 0);
+    if (yPosition < 0 || yPosition > yPixels - 1) return RGBColor(0, 0, 0);
 
 
-    long pixelStart = (xPosition + 1) + (xPixels + 1) * yPosition;
-    Serial.print(" ");
-    Serial.println(pixelStart);
-    
+    long pixelStart = 54 + xPosition * 3 + (xPixels * yPosition * 3);// + (yPosition ) | + (yPosition  * 2)
+    /*
+    Serial.print("\t");
+    Serial.print(pixelStart);
+    Serial.print("\t");
+    Serial.print(file[pixelStart + 2]);
+    Serial.print("\t");
+    Serial.print(file[pixelStart + 1]);
+    Serial.print("\t");
+    Serial.println(file[pixelStart]);
+    */
     return RGBColor(file[pixelStart + 2], file[pixelStart + 1], file[pixelStart]);
   }
 };

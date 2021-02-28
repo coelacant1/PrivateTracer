@@ -36,14 +36,26 @@ long previousTime = micros();
 Boot boot;
 Face face;
 
-BMP testBMP = BMP(Vector2D(200, 200), Vector2D(-100, 0), protoTest);
+BMP openInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), openInvader);
+BMP closeInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), closeInvader);
+BMP colorTestBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), colorTest);
 
-const int MaxBrightness = 20;
+BMP wag1BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag1);
+BMP wag2BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag2);
+BMP wag3BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag3);
+BMP wag4BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag4);
+BMP wag5BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag5);
+BMP wag6BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag6);
 
-Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &pixelString, true, false);
-Camera camRearTop = Camera(Vector3D(45, 0, 0),    Vector3D(90, 90, -500),    306, &pixelString, false, false);
-Camera camFronBot = Camera(Vector3D(0, 0, 0),     Vector3D(-5, 0, -500),     306, &pixelString, true, false);
-Camera camRearBot = Camera(Vector3D(0, 0, 180),   Vector3D(-20, -131, -500), 306, &pixelString, false, false);
+const uint8_t MaxBrightness = 20;
+
+Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &primaryPixelString, true, false);
+Camera camRearTop = Camera(Vector3D(45, 0, 0),    Vector3D(90, 90, -500),    306, &primaryPixelString, false, false);
+Camera camFronBot = Camera(Vector3D(0, 0, 0),     Vector3D(-5, 0, -500),     306, &primaryPixelString, true, false);
+Camera camRearBot = Camera(Vector3D(0, 0, 180),   Vector3D(-20, -131, -500), 306, &primaryPixelString, false, false);
+
+Camera camMiddTop = Camera(Vector3D(45, 0, 0),   Vector3D(300, 0, -500), 89, &secondaryPixelString, true, false);
+Camera camMiddBot = Camera(Vector3D(-135, 0, 0),  Vector3D(-100, -90, -500), 89, &secondaryPixelString, true, false);
 
 void printRenderTime(){
   Serial.print("Frame rendered in ");
@@ -59,29 +71,47 @@ void updateLEDs(Scene* scene){
   camRearTop.Rasterize(scene, 1.0f, MaxBrightness);
   camFronBot.Rasterize(scene, 1.0f, MaxBrightness);
   camRearBot.Rasterize(scene, 1.0f, MaxBrightness);
+  camMiddTop.Rasterize(scene, 1.0f, MaxBrightness);
+  camMiddBot.Rasterize(scene, 1.0f, MaxBrightness);
   
   for (int i = 0; i < 306; i++) {
     leds.setPixel(i + 1224, camFronTop.GetPixels()[i].Color.R, camFronTop.GetPixels()[i].Color.G, camFronTop.GetPixels()[i].Color.B);
     leds.setPixel(i + 306, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);
     leds.setPixel(i + 612, camFronBot.GetPixels()[i].Color.R, camFronBot.GetPixels()[i].Color.G, camFronBot.GetPixels()[i].Color.B);
     leds.setPixel(i + 918, camRearBot.GetPixels()[i].Color.R, camRearBot.GetPixels()[i].Color.G, camRearBot.GetPixels()[i].Color.B);
+
+    if(i < 89){
+      leds.setPixel(i + 1530, camMiddBot.GetPixels()[i].Color.R, camMiddBot.GetPixels()[i].Color.G, camMiddBot.GetPixels()[i].Color.B);
+    }
+    else if (i < 178){
+      leds.setPixel(i + 1530, camMiddTop.GetPixels()[i - 89].Color.R, camMiddTop.GetPixels()[i - 89].Color.G, camMiddTop.GetPixels()[i - 89].Color.B);
+    }
   }
   
   leds.show();
   printRenderTime();
 }
 
-void updateLEDs(BMP* bmp){
-  camFronTop.BMPRasterize(bmp, 1.0f, MaxBrightness);
-  camRearTop.BMPRasterize(bmp, 1.0f, MaxBrightness);
-  camFronBot.BMPRasterize(bmp, 1.0f, MaxBrightness);
-  camRearBot.BMPRasterize(bmp, 1.0f, MaxBrightness);
+void updateLEDs(BMP* bmp, uint8_t brightnessLevel){
+  camFronTop.BMPRasterize(bmp, 1.0f, brightnessLevel);
+  camRearTop.BMPRasterize(bmp, 1.0f, brightnessLevel);
+  camFronBot.BMPRasterize(bmp, 1.0f, brightnessLevel);
+  camRearBot.BMPRasterize(bmp, 1.0f, brightnessLevel);
+  camMiddTop.BMPRasterize(bmp, 1.0f, brightnessLevel);
+  camMiddBot.BMPRasterize(bmp, 1.0f, brightnessLevel);
   
   for (int i = 0; i < 306; i++) {
     leds.setPixel(i + 1224, camFronTop.GetPixels()[i].Color.R, camFronTop.GetPixels()[i].Color.G, camFronTop.GetPixels()[i].Color.B);
     leds.setPixel(i + 306, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);
     leds.setPixel(i + 612, camFronBot.GetPixels()[i].Color.R, camFronBot.GetPixels()[i].Color.G, camFronBot.GetPixels()[i].Color.B);
     leds.setPixel(i + 918, camRearBot.GetPixels()[i].Color.R, camRearBot.GetPixels()[i].Color.G, camRearBot.GetPixels()[i].Color.B);
+    
+    if(i < 89){
+      leds.setPixel(i + 1530, camMiddBot.GetPixels()[i].Color.R, camMiddBot.GetPixels()[i].Color.G, camMiddBot.GetPixels()[i].Color.B);
+    }
+    else if (i < 178){
+      leds.setPixel(i + 1530, camMiddTop.GetPixels()[i - 89].Color.R, camMiddTop.GetPixels()[i - 89].Color.G, camMiddTop.GetPixels()[i - 89].Color.B);
+    }
   }
   
   leds.show();
@@ -150,8 +180,26 @@ void loop() {
   }
   */
   
-  for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
-    updateLEDs(&testBMP);
+  for (float i = 0; i < 720; i += 1.2f) {
+    if ((int)i % 72 > 60){
+      updateLEDs(&wag1BMP, MaxBrightness);
+    }
+    else if ((int)i % 72 > 48){
+      updateLEDs(&wag2BMP, MaxBrightness);
+    }
+    else if ((int)i % 72 > 36){
+      updateLEDs(&wag3BMP, MaxBrightness);
+    }
+    else if ((int)i % 72 > 24){
+      updateLEDs(&wag4BMP, MaxBrightness);
+    }
+    else if ((int)i % 72 > 12){
+      updateLEDs(&wag5BMP, MaxBrightness);
+    }
+    else{
+      updateLEDs(&wag6BMP, MaxBrightness);
+    }
+    
     Serial.print(i);
     Serial.print(" ");
   }
