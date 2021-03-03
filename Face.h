@@ -195,8 +195,8 @@ public:
     objects[4]->ResetVertices();
     
     if (i > 550){
-      eyeTest.Update(Eye::Sleepy, 0.03f);
-      mouthTest.Update(Mouth::Smirk, 0.05f);
+      eyeTest.Update(Eye::Surprised, 0.03f);
+      mouthTest.Update(Mouth::OhNo, 0.05f);
     }
     else if (i > 400){
       eyeTest.Update(Eye::Happy, 0.05f);

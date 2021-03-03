@@ -8,7 +8,10 @@ class BMP{
 private:
   Vector2D imageSize;
   Vector2D offsetPosition;
+  Vector2D shiftPosition;
   uint8_t* file;
+  uint8_t padding;
+  uint8_t glitch;
   int xPixels;
   int yPixels;
   long imagePixels;
@@ -19,11 +22,13 @@ private:
   }
   
 public:
-  BMP(Vector2D imageSize, Vector2D offsetPosition, const uint8_t* bmpArray){
+  BMP(Vector2D imageSize, Vector2D offsetPosition, const uint8_t* bmpArray, uint8_t padding){
     this->file = bmpArray;
     Serial.println("READING BMP FILE");
     this->imageSize = imageSize;
     this->offsetPosition = offsetPosition;
+    this->padding = padding;
+    this->glitch = 0;
 
     xPixels = *(int*)&file[18];
     yPixels = *(int*)&file[22];
@@ -57,13 +62,25 @@ public:
     */
   }
 
+  void ShiftPosition(Vector2D shiftPosition){
+    this->shiftPosition = this->shiftPosition + shiftPosition;
+  }
+
+  void ResetShift(){
+    shiftPosition = Vector2D();
+  }
+
+  void Glitch(uint8_t value){
+    this->glitch = value;
+  }
+
   //maps XY position to an rgb value on the 
   RGBColor GetRGB(Vector2D xyPosition){
     //convert xyposition to integer position on image plane
     int xPosition, yPosition;
 
-    xPosition = Mathematics::Map(xyPosition.X, offsetPosition.X, imageSize.X + 1 + offsetPosition.X, 0, xPixels);//scale to fit image size
-    yPosition = Mathematics::Map(xyPosition.Y, offsetPosition.Y, imageSize.Y + 1 + offsetPosition.Y, 0, yPixels);
+    xPosition = Mathematics::Map(xyPosition.X, offsetPosition.X + shiftPosition.X, imageSize.X + 1 + offsetPosition.X + shiftPosition.X, 0, xPixels);//scale to fit image size
+    yPosition = Mathematics::Map(xyPosition.Y, offsetPosition.Y + shiftPosition.Y, imageSize.Y + 1 + offsetPosition.Y + shiftPosition.Y, 0, yPixels);
     /*
     Serial.print(xyPosition.ToString());
     Serial.print("\t");
@@ -76,7 +93,7 @@ public:
     if (yPosition < 0 || yPosition > yPixels - 1) return RGBColor(0, 0, 0);
 
 
-    long pixelStart = 54 + xPosition * 3 + (xPixels * yPosition * 3);// + (yPosition ) | + (yPosition  * 2)
+    long pixelStart = 54 + xPosition * 3 + (xPixels * yPosition * 3 + (yPosition * padding)) + glitch;// + (yPosition) | + (yPosition  * 2)
     /*
     Serial.print("\t");
     Serial.print(pixelStart);
