@@ -18,7 +18,10 @@ private:
   const int displayWidth = 320;
 
   RGBColor ConvertRGB565(uint16_t color){
-    
+
+    Serial.println("Not done yet");
+
+    return RGBColor();
   }
   
 public:

@@ -135,6 +135,13 @@ public:
 
     return center;
   }
+
+  void GetMinMaxDimensions(Vector3D &minimum, Vector3D &maximum){
+    for(int i = 0; i < vertexLength; i++){
+      minimum = Vector3D::Min(minimum, vertices[i]);
+      maximum = Vector3D::Max(maximum, vertices[i]);
+    }
+  }
   
   void Rotate(Quaternion q) {
     this->q = Quaternion(q);
@@ -203,7 +210,7 @@ public:
       vertices[i] = vertices[i] + p;
     }
 
-    this->p = p;
+    this->p = this->p + p;
   }
   
   void MoveAbsolute(Vector3D p){

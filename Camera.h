@@ -238,7 +238,7 @@ public:
 
       xpos = sinf(moveBMP * 3.14159f / 180.0f * 1.9f) * 10.0f;
       ypos = cosf(moveBMP * 3.14159f / 180.0f * 2.5f) * 10.0f;
-      modifier;//0.9f + sinf(moveBMP * 3.14159f / 180.0f * 4.0f) * 0.1f;
+      modifier = 1.0f;//0.9f + sinf(moveBMP * 3.14159f / 180.0f * 4.0f) * 0.1f;
       
       //Vector2D(camQ.UnrotateVector(Vector3D(*t.p1)) - camV);
       Vector3D rotateRay = q.RotateVector(Vector3D(pixelStorage[i].X, pixelStorage[i].Y, 0).Subtract(camV)).Add(Vector3D(-xpos, -ypos, 0));

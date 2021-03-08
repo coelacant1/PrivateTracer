@@ -127,7 +127,7 @@ private:
 public:
   Mouth(){}
 
-  Talk(float* pointMultiplier){// 12 inputs required
+  void Talk(float* pointMultiplier){// 12 inputs required
     current3DObj.GetVertices()[0].Y = current3DObj.GetVertices()[0].Y + pointMultiplier[11];// top left
     current3DObj.GetVertices()[11].Y = current3DObj.GetVertices()[11].Y + pointMultiplier[9];// right 1
     current3DObj.GetVertices()[10].Y = current3DObj.GetVertices()[10].Y + pointMultiplier[7];// right 1

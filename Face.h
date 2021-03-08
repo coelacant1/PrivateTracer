@@ -142,16 +142,6 @@ public:
     objects[2]->MoveRelative(Vector3D(-40, 30, 0));
     
     
-    float a = sinf(i * 3.14159f / 180.0f * 7.0f);
-    float b = sinf(i * 3.14159f / 180.0f * 9.0f);
-    float c = sinf(i * 3.14159f / 180.0f * 10.0f);
-    float d = sinf(i * 3.14159f / 180.0f * 12.0f);
-    float e = sinf(i * 3.14159f / 180.0f * 15.0f);
-    float f = sinf(i * 3.14159f / 180.0f * 20.0f);
-    float g = sinf(i * 3.14159f / 180.0f * 25.0f);
-    float h = sinf(i * 3.14159f / 180.0f * 30.0f);
-    
-    
     //fftDeformer.CosineInterpolationDeformer(fftData, 10, 10.0f, -200.0f, 200.0f, ObjectDeformer::XAxis, ObjectDeformer::YAxis);
     mouthTest.Talk(fftData);
 

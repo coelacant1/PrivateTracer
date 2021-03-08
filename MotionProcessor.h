@@ -75,7 +75,7 @@ public:
     float dT = ((float)micros() - (float)previousMicros) / 1000000.0f;
     float wait = ((float)micros() - (float)microWait) / 1000000.0f;
 
-    if (wait >= 0.033f){
+    if (wait >= 0.05f){
       if(stepV == 0){
         localForce = ReadLocalAcceleration();
         stepV++;

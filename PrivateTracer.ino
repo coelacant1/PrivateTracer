@@ -12,6 +12,7 @@
 #include "BMP.h"
 #include "BMPImages.h"
 #include "CrashObjs.h"
+#include "PhysicsSimulator.h"
 
 MotionProcessor motionProcessor;
 
@@ -36,6 +37,7 @@ long previousTime = micros();
 
 Boot boot;
 Face face;
+PhysicsSimulator physicsSim;
 
 BMP openInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), openInvader, 0);
 BMP closeInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), closeInvader, 0);
@@ -52,7 +54,7 @@ BMP bootBMP = BMP(Vector2D(800, 3200), Vector2D(-200, -3200), bootImage, 2);
 BMP crashBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), crashImage, 0);
 BMP dedBMP = BMP(Vector2D(200, 200), Vector2D(20, 20), dedImage, 0);
 
-const uint8_t MaxBrightness = 40;
+const uint8_t MaxBrightness = 20;
 
 Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &primaryPixelString, true, false);
 Camera camRearTop = Camera(Vector3D(45, 0, 0),    Vector3D(90, 90, -500),    306, &primaryPixelString, false, false);
@@ -153,7 +155,15 @@ void setup() {
 }
 
 void loop() {
-  
+  for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
+    //physicsSim.Update(motionProcessor.GetLocalAcceleration(), motionProcessor.GetAbsoluteOrientation());
+    physicsSim.Update(Vector3D(0, 0, 0), Quaternion());
+    
+    updateLEDs(physicsSim.GetScene());
+    Serial.print(i);
+    Serial.print(" ");
+  }
+  /*
   for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
     if (fft256_1.available()) {
       for (int i=4; i < 16; i++) {  // print the first 20 bins
@@ -183,7 +193,7 @@ void loop() {
     Serial.print(i);
     Serial.print(" ");
   }
-  
+  */
   /*
   for (float i = 0; i < 720; i += 1.2f) {
     if ((int)i % 72 > 60){
@@ -216,7 +226,7 @@ void loop() {
     }
   }
   */
-  
+  /*
   for (float i = 0; i < 1200; i += 1.2f) {
     uint8_t glitchValue = (int)i % 20 > 16 ? (int)i / 4 : 0;
     
@@ -241,4 +251,5 @@ void loop() {
   
   bootBMP.ResetShift();
   crashBMP.ResetShift();
+  */
 }
