@@ -12,56 +12,63 @@ private:
   float radius = 1.0f;
   
 public:
-  Vector3D velocity;
+  Vector3D velocity = Vector3D(0, 0, 0);
+  Vector3D position = Vector3D(0, 0, 0);
   
   BoundarySphere(Object3D* object, float radius){
     this->object = object;
-    this->centerPosition = object->GetVertexCenter();
+    this->position = object->GetVertexCenter();
     this->radius = radius;
   }
   
-  BoundarySphere(Object3D* object, Vector3D centerPosition, float radius){
+  BoundarySphere(Object3D* object, Vector3D position, float radius){
     this->object = object;
-    this->centerPosition = centerPosition;
+    this->position = position;
     this->radius = radius;
-  }
-
-  Vector3D GetPosition(){
-    return object->GetPosition();
   }
 
   float GetRadius(){
     return radius;
   }
 
+  Object3D* GetObject3D(){
+    return object;
+  }
+
   void Update(float dT, Vector3D acceleration, Quaternion rotation){
     Quaternion rotationChange = rotation.Multiply(previousRotation.MultiplicativeInverse());
-    velocity = rotationChange.RotateVector(velocity) + acceleration * dT;//maintain momentum of existing velocity, apply local acceleration
-    //position = position + velocity * dT;
-
-    //non constant dt causes a switch in states and hold on wall, need to shift inward
-
-    Serial.println(velocity.ToString());
-
-    object->MoveRelative(velocity * dT);
+    velocity = rotationChange.RotateVector(velocity) * 0.999f + acceleration * dT;//maintain momentum of existing velocity, apply local acceleration
+    velocity = velocity.Constrain(-2500, 2500);
+    position = position + velocity * dT;
 
     previousRotation = rotation;
   }
   
   bool IsIntersecting(BoundarySphere *bO){
-    return radius + bO->GetRadius() < fabs((GetPosition() - bO->GetPosition()).Magnitude());
+    return radius + bO->GetRadius() > fabs((position - bO->position).Magnitude());
   }
   
   void Collide(float elasticity, BoundarySphere *bO){
     if(IsIntersecting(bO)){
       //collision
-      Vector3D difference = GetPosition() - bO->GetPosition();
-      Vector3D normal = difference / difference.Absolute();
-      Vector3D vrelative = this->velocity - bO->velocity;
-      Vector3D vnormal = vrelative.Multiply(normal).Multiply(normal);
+      Vector3D direction = (position - bO->position).Normal();
+      Vector3D vDiff = velocity - bO->velocity;
+      float fellingSpeed = vDiff.DotProduct(direction);
 
-      this->velocity = this->velocity - vnormal;
-      bO->velocity = bO->velocity + vnormal;
+      if(fellingSpeed >= 0){
+        return;
+      }
+
+      float mass1 = 1.0f;
+      float mass2 = 1.0f;
+
+      float speed1 = (2 * mass2 * fellingSpeed) / (mass1 + mass2);
+      float speed2 = (fellingSpeed * (mass2 - mass1)) / (mass1 + mass2);
+
+      bO->velocity = bO->velocity + direction * speed1;
+      this->velocity = this->velocity + direction * (speed2 - fellingSpeed);
+
+      Serial.println("collision");
     }//else{//no collision}
   }
 };
@@ -74,8 +81,8 @@ private:
   Vector3D minimum;
   
 public:
-  Vector3D velocity;
-  Vector3D position;
+  Vector3D velocity = Vector3D(0, 0, 0);
+  Vector3D position = Vector3D(0, 0, 0);
   
   BoundaryCube(Object3D* object){//calculates center position and object size
     this->centerPosition = object->GetVertexCenter();
@@ -125,32 +132,48 @@ public:
     
     return collision;
   }
+
+  int8_t IsIntersect(float x1Min, float x1Max, float x2Min, float x2Max){
+    
+  }
   
   Vector3D IsIntersecting(BoundarySphere *bO){
     Vector3D collision;
     Vector3D minimumExt, maximumExt;
     Vector3D sphereSize = Vector3D(bO->GetRadius(), bO->GetRadius(), bO->GetRadius());
 
-    minimumExt = bO->GetPosition() - sphereSize / 2.0f;
-    maximumExt = bO->GetPosition() + sphereSize / 2.0f;
+    minimumExt = bO->position - sphereSize;
+    maximumExt = bO->position + sphereSize;
 
-    collision.X = maximum.X >= minimumExt.X ? 0 : 1;
-    collision.X = minimumExt.X >= minimum.X ? 0 : -1;
-    collision.Y = maximum.Y >= minimumExt.Y ? 0 : 1;
-    collision.Y = minimumExt.Y >= minimum.Y ? 0 : -1;
-    collision.Z = maximum.Z >= minimumExt.Z ? 0 : 1;
-    collision.Z = minimumExt.Z >= minimum.Z ? 0 : -1;
-    
+    collision.X = minimum.X <= maximumExt.X && maximum.X >= minimumExt.X;
+    collision.Y = minimum.Y <= maximumExt.Y && maximum.Y >= minimumExt.Y;
+    collision.Z = minimum.Z <= maximumExt.Z && maximum.Z >= minimumExt.Z;
+
     return collision;
   }
   
   void CollideSphere(float elasticity, BoundarySphere *bO){
     //if sphere is not within the bounds of the prism, collide
     Vector3D collision = IsIntersecting(bO);
+    Vector3D shiftCorrection;
     
-    bO->velocity.X = collision.X == 0 ? bO->velocity.X : -bO->velocity.X * elasticity;
-    bO->velocity.Y = collision.Y == 0 ? bO->velocity.Y : -bO->velocity.Y * elasticity;
-    bO->velocity.Z = collision.Z == 0 ? bO->velocity.Z : -bO->velocity.Z * elasticity;
+    if(collision.X) shiftCorrection.X = bO->velocity.X * -0.01f;
+    if(collision.Y) shiftCorrection.Y = bO->velocity.Y * -0.01f;
+    if(collision.Z) shiftCorrection.Z = bO->velocity.Z * -0.01f;
+    
+    bO->velocity.X = collision.X == 1 ? bO->velocity.X : -bO->velocity.X * elasticity;
+    bO->velocity.Y = collision.Y == 1 ? bO->velocity.Y : -bO->velocity.Y * elasticity;
+    bO->velocity.Z = collision.Z == 1 ? bO->velocity.Z : -bO->velocity.Z * elasticity;
+
+    bO->position.X = Mathematics::Constrain(bO->position.X, minimum.X - bO->GetRadius(), maximum.X + bO->GetRadius());
+    bO->position.Y = Mathematics::Constrain(bO->position.Y, minimum.Y - bO->GetRadius(), maximum.Y + bO->GetRadius());
+    bO->position.Z = Mathematics::Constrain(bO->position.Z, minimum.Z - bO->GetRadius(), maximum.Z + bO->GetRadius());
+
+    
+    bO->position = bO->position + shiftCorrection;
+    
+    //Serial.println(bO->velocity.ToString());
+    //Serial.println(bO->position.ToString());
   }
 };
 
@@ -183,21 +206,35 @@ public:
     }
   }
 
+  Vector3D RandomRatio(float range){
+    Vector3D vRand;
+
+    vRand.X = 1.0f + ((float)random(0, 999) / 1000.0f) * range;
+    vRand.Y = 1.0f + ((float)random(0, 999) / 1000.0f) * range;
+    vRand.Z = 1.0f + ((float)random(0, 999) / 1000.0f) * range;
+
+    return vRand;
+  }
+
   void Update(float dT, Vector3D acceleration, Quaternion rotation){
-    //check if objects are colliding
-    //object to object collisions
+    
     for (int i = 0; i < sphereCount; i++){
-      for (int j = 0; j < sphereCount; j++){
-        if (i == j || i > j || j < i) break;//only above determinant line, only compare once
-        
+      bS[i]->Update(dT, acceleration * RandomRatio(2.0f), rotation);
+      
+      //object to object collisions
+      for (int j = i + 1; j < sphereCount; j++){//ignore determinant line, only one side
         bS[i]->Collide(elasticity, bS[j]);
       }
-    }
-    
-    //box collisions
-    for (int i = 0; i < sphereCount; i++){
-      bS[i]->Update(dT, acceleration, rotation);
+      
+      //box collisions
       bC->CollideSphere(elasticity, bS[i]);
+
+      bS[i]->velocity = bS[i]->velocity * RandomRatio(0.0001f);
+      
+      bS[i]->GetObject3D()->ResetVertices();
+      bS[i]->GetObject3D()->MoveRelative(bS[i]->position);
+      
+      //Serial.println(bS[i]->position.ToString());
     }
   }
 };

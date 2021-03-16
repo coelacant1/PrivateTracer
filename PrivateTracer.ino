@@ -156,8 +156,10 @@ void setup() {
 
 void loop() {
   for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
-    //physicsSim.Update(motionProcessor.GetLocalAcceleration(), motionProcessor.GetAbsoluteOrientation());
-    physicsSim.Update(Vector3D(0, 0, 0), Quaternion());
+    motionProcessor.Update();
+    
+    physicsSim.Update(motionProcessor.GetLocalAcceleration(), Quaternion());//motionProcessor.GetAbsoluteOrientation());
+    //physicsSim.Update(Vector3D(0, 0, 0), Quaternion());
     
     updateLEDs(physicsSim.GetScene());
     Serial.print(i);
@@ -185,7 +187,7 @@ void loop() {
     
     face.Update(i);
     face.FadeIn(0.0125f);
-    face.Drift(motionProcessor.GetLocalAcceleration(), motionProcessor.GetLocalAngularVelocity());
+    face.Drift(motionProcessor.GetLocalAccelerationFiltered(), motionProcessor.GetLocalAngularVelocity());
 
     //Serial.println(motionProcessor.GetLocalAngularVelocity().ToString());
 

@@ -120,12 +120,20 @@ public:
     return localForce;
   }
 
-  Vector3D GetLocalAcceleration(){//acceleration without gravity
+  Vector3D GetLocalAccelerationFiltered(){//acceleration without gravity
     return localAccelKF.Filter(localAcceleration);
   }
 
-  Vector3D GetLocalAngularVelocity(){
+  Vector3D GetLocalAngularVelocityFiltered(){
     return localAngulKF.Filter(localAngularVelocity);
+  }
+  
+  Vector3D GetLocalAcceleration(){//acceleration without gravity
+    return localAcceleration;
+  }
+
+  Vector3D GetLocalAngularVelocity(){
+    return localAngularVelocity;
   }
   
   Quaternion GetAbsoluteOrientation(){
