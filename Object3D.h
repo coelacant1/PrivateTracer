@@ -133,6 +133,8 @@ public:
 
     center = center.Divide(vertexLength);
 
+    p = center;
+
     return center;
   }
 

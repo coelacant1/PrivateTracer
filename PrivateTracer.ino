@@ -55,6 +55,7 @@ BMP crashBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), crashImage, 0);
 BMP dedBMP = BMP(Vector2D(200, 200), Vector2D(20, 20), dedImage, 0);
 
 const uint8_t MaxBrightness = 20;
+long screensaverTime = 0;
 
 Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &primaryPixelString, true, false);
 Camera camRearTop = Camera(Vector3D(45, 0, 0),    Vector3D(90, 90, -500),    306, &primaryPixelString, false, false);
@@ -150,22 +151,11 @@ void setup() {
   delay(50);
 
   previousTime = micros();
-
+  screensaverTime = millis();
   //bootAnimation();
 }
 
 void loop() {
-  for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
-    motionProcessor.Update();
-    
-    physicsSim.Update(motionProcessor.GetLocalAcceleration(), Quaternion());//motionProcessor.GetAbsoluteOrientation());
-    //physicsSim.Update(Vector3D(0, 0, 0), Quaternion());
-    
-    updateLEDs(physicsSim.GetScene());
-    Serial.print(i);
-    Serial.print(" ");
-  }
-  /*
   for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
     if (fft256_1.available()) {
       for (int i=4; i < 16; i++) {  // print the first 20 bins
@@ -180,22 +170,38 @@ void loop() {
         //Serial.print(" ");
       }
     }
-    
+
     motionProcessor.Update();
+    
+    Vector3D angularVelocity = motionProcessor.GetLocalAngularVelocity();
+    
+    physicsSim.Update(angularVelocity * 10.0f, Quaternion());
+
+    if(fabs(angularVelocity.X) > 90 || fabs(angularVelocity.Y) > 90 || fabs(angularVelocity.Z) > 90){
+      screensaverTime = millis();
+    }
 
     //Serial.println(camRearTop.GetPictureCenter().ToString());
     
     face.Update(i);
     face.FadeIn(0.0125f);
-    face.Drift(motionProcessor.GetLocalAccelerationFiltered(), motionProcessor.GetLocalAngularVelocity());
+    face.Drift(motionProcessor.GetLocalAccelerationFiltered(), motionProcessor.GetLocalAngularVelocityFiltered());
 
     //Serial.println(motionProcessor.GetLocalAngularVelocity().ToString());
 
-    updateLEDs(face.GetScene());
+    //if not much change for 5 seconds, physics sim
+
+    if(millis() - screensaverTime > 10000){
+      updateLEDs(physicsSim.GetScene());
+    }
+    else{
+      updateLEDs(face.GetScene());
+    }
+    
     Serial.print(i);
     Serial.print(" ");
   }
-  */
+  
   /*
   for (float i = 0; i < 720; i += 1.2f) {
     if ((int)i % 72 > 60){

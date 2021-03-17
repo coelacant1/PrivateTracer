@@ -67,8 +67,6 @@ public:
 
       bO->velocity = bO->velocity + direction * speed1;
       this->velocity = this->velocity + direction * (speed2 - fellingSpeed);
-
-      Serial.println("collision");
     }//else{//no collision}
   }
 };
@@ -229,7 +227,7 @@ public:
       //box collisions
       bC->CollideSphere(elasticity, bS[i]);
 
-      bS[i]->velocity = bS[i]->velocity * RandomRatio(0.0001f);
+      bS[i]->velocity = bS[i]->velocity * RandomRatio(0.0005f);
       
       bS[i]->GetObject3D()->ResetVertices();
       bS[i]->GetObject3D()->MoveRelative(bS[i]->position);

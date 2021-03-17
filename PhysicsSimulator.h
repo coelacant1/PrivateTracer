@@ -8,7 +8,7 @@
 
 class PhysicsSimulator{
 private:
-  BoundaryCube bC = BoundaryCube(Vector3D(0, 0, 0), Vector3D(300, 200, 30));
+  BoundaryCube bC = BoundaryCube(Vector3D(0, 0, 0), Vector3D(300, 200, 100));
   BoundaryMotionSimulator* bMS;
   Scene* scene;
   Light lights[6];
@@ -82,7 +82,8 @@ public:
     long currentTime = micros();
     float dT = (float)(currentTime - previousTime) / 1000000.0f;
 
-    Vector3D accelNormalized = Vector3D(-acceleration.Y, acceleration.Z, -acceleration.X) * 200.0f;
+    //Vector3D accelNormalized = Vector3D(-acceleration.Y, acceleration.Z, -acceleration.X) * 200.0f;
+    Vector3D accelNormalized = Vector3D(acceleration.X, acceleration.Z, acceleration.Y);
 
     bMS->Update(dT, accelNormalized, rotation);
     
@@ -97,6 +98,13 @@ public:
     icosaSphere9Obj.MoveRelative(Vector3D(0, 150, 0));
     icosaSphere10Obj.MoveRelative(Vector3D(0, 150, 0));
     icosaSphere11Obj.MoveRelative(Vector3D(0, 150, 0));
+
+    for (int i = 0; i < 12; i++){
+      float positionZ = objects[i]->GetPosition().Z;
+      float scaleRatio = Mathematics::Map(positionZ, -50, 50, 1.2f, 0.8f);
+      
+      objects[i]->ScaleCenter(Vector3D(scaleRatio, scaleRatio, scaleRatio));
+    }
 
     previousTime = currentTime;
 
