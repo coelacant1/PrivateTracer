@@ -54,7 +54,7 @@ BMP bootBMP = BMP(Vector2D(800, 3200), Vector2D(-200, -3200), bootImage, 2);
 BMP crashBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), crashImage, 0);
 BMP dedBMP = BMP(Vector2D(200, 200), Vector2D(20, 20), dedImage, 0);
 
-const uint8_t MaxBrightness = 20;
+const uint8_t MaxBrightness = 50;
 long screensaverTime = 0;
 
 Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &primaryPixelString, true, false);
@@ -150,12 +150,12 @@ void setup() {
   Serial.println("Starting...");
   delay(50);
 
+  //bootAnimation();
   previousTime = micros();
   screensaverTime = millis();
-  //bootAnimation();
 }
 
-void loop() {
+void faceAnimation(){
   for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
     if (fft256_1.available()) {
       for (int i=4; i < 16; i++) {  // print the first 20 bins
@@ -201,40 +201,9 @@ void loop() {
     Serial.print(i);
     Serial.print(" ");
   }
-  
-  /*
-  for (float i = 0; i < 720; i += 1.2f) {
-    if ((int)i % 72 > 60){
-      updateLEDs(&wag1BMP, MaxBrightness);
-    }
-    else if ((int)i % 72 > 48){
-      updateLEDs(&wag2BMP, MaxBrightness);
-    }
-    else if ((int)i % 72 > 36){
-      updateLEDs(&wag3BMP, MaxBrightness);
-    }
-    else if ((int)i % 72 > 24){
-      updateLEDs(&wag4BMP, MaxBrightness);
-    }
-    else if ((int)i % 72 > 12){
-      updateLEDs(&wag5BMP, MaxBrightness);
-    }
-    else{
-      updateLEDs(&wag6BMP, MaxBrightness);
-    }
-    
-    Serial.print(i);
-    Serial.print(" ");
-  }
-  */
-  /*
-  for (int y = 0; y <= 200; y += 3){
-    for (int x = -100; x <= 100; x += 3){
-      testBMP.GetRGB(Vector2D(x, y));
-    }
-  }
-  */
-  /*
+}
+
+void deathAnimation(){
   for (float i = 0; i < 1200; i += 1.2f) {
     uint8_t glitchValue = (int)i % 20 > 16 ? (int)i / 4 : 0;
     
@@ -259,5 +228,11 @@ void loop() {
   
   bootBMP.ResetShift();
   crashBMP.ResetShift();
-  */
+}
+
+void loop() {
+  bootAnimation();
+  faceAnimation();
+  faceAnimation();
+  deathAnimation();
 }
