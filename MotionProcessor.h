@@ -54,7 +54,7 @@ public:
     pinMode(18, INPUT_PULLUP);
     pinMode(19, INPUT_PULLUP);
 
-    //Wire.setClock(100000);
+    Wire.setClock(100000);
     if (!bno.begin())
     {
       Serial.println("No BNO055 detected");
@@ -75,7 +75,7 @@ public:
     float dT = ((float)micros() - (float)previousMicros) / 1000000.0f;
     float wait = ((float)micros() - (float)microWait) / 1000000.0f;
 
-    if (wait >= 0.05f){
+    if (wait >= 0.001f){
       if(stepV == 0){
         localForce = ReadLocalAcceleration();
         stepV++;

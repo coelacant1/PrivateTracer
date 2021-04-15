@@ -1,3 +1,5 @@
+#pragma once
+
 const String protoDRV1String = 
 "v 8.940000 18.000000 0.000000\n"
 "v 22.499973 18.003750 0.000000\n"

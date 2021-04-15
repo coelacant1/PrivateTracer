@@ -21,7 +21,6 @@ DMAMEM int displayMemory[ledsPerStrip * 6];
 int drawingMemory[ledsPerStrip * 6];
 const int config = WS2811_GRB | WS2811_800kHz;
 OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
-
 AudioInputAnalog         adc1(A3);
 AudioAmplifier           amp1;
 AudioFilterStateVariable filter1;        //xy=496,419
@@ -32,7 +31,6 @@ AudioConnection          patchCord2(amp1, 0, filter1, 0);
 AudioConnection          patchCord3(filter1, 1, mqs1, 0);
 AudioConnection          patchCord4(filter1, 1, mqs1, 1);
 AudioConnection          patchCord5(filter1, 1, fft256_1, 0);
-
 long previousTime = micros();
 
 Boot boot;
@@ -43,18 +41,11 @@ BMP openInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), openInvader, 0)
 BMP closeInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), closeInvader, 0);
 BMP colorTestBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), colorTest, 0);
 
-BMP wag1BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag1, 0);
-BMP wag2BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag2, 0);
-BMP wag3BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag3, 0);
-BMP wag4BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag4, 0);
-BMP wag5BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag5, 0);
-BMP wag6BMP = BMP(Vector2D(400, 400), Vector2D(-200, -100), wag6, 0);
-
 BMP bootBMP = BMP(Vector2D(800, 3200), Vector2D(-200, -3200), bootImage, 2);
 BMP crashBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), crashImage, 0);
 BMP dedBMP = BMP(Vector2D(200, 200), Vector2D(20, 20), dedImage, 0);
 
-const uint8_t MaxBrightness = 50;
+const uint8_t MaxBrightness = 30;
 long screensaverTime = 0;
 
 Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &primaryPixelString, true, false);
@@ -136,12 +127,13 @@ void bootAnimation(){
 }
 
 void setup() {
+  /*
   AudioMemory(100);
   amp1.gain(4.0);
 
   filter1.frequency(750);
   filter1.octaveControl(4);
-  
+  */
   leds.begin();
   leds.show();
 
@@ -157,6 +149,7 @@ void setup() {
 
 void faceAnimation(){
   for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
+    
     if (fft256_1.available()) {
       for (int i=4; i < 16; i++) {  // print the first 20 bins
         float fftOut = fft256_1.read(i);
@@ -170,6 +163,7 @@ void faceAnimation(){
         //Serial.print(" ");
       }
     }
+    
 
     motionProcessor.Update();
     
@@ -185,13 +179,14 @@ void faceAnimation(){
     
     face.Update(i);
     face.FadeIn(0.0125f);
-    face.Drift(motionProcessor.GetLocalAccelerationFiltered(), motionProcessor.GetLocalAngularVelocityFiltered());
+    //face.Drift(motionProcessor.GetLocalAccelerationFiltered(), motionProcessor.GetLocalAngularVelocityFiltered());
+    face.Drift(Vector3D(), motionProcessor.GetLocalAngularVelocity() * 4.0f);
 
-    //Serial.println(motionProcessor.GetLocalAngularVelocity().ToString());
+    Serial.println(motionProcessor.GetLocalAngularVelocity().ToString());
 
     //if not much change for 5 seconds, physics sim
 
-    if(millis() - screensaverTime > 10000){
+    if(millis() - screensaverTime > 10000 && false){//DISABLED PHYSICS ANIMATION
       updateLEDs(physicsSim.GetScene());
     }
     else{
@@ -231,8 +226,8 @@ void deathAnimation(){
 }
 
 void loop() {
-  bootAnimation();
+  //bootAnimation();
   faceAnimation();
-  faceAnimation();
-  deathAnimation();
+  //faceAnimation();
+  //deathAnimation();
 }

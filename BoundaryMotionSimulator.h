@@ -130,10 +130,6 @@ public:
     
     return collision;
   }
-
-  int8_t IsIntersect(float x1Min, float x1Max, float x2Min, float x2Max){
-    
-  }
   
   Vector3D IsIntersecting(BoundarySphere *bO){
     Vector3D collision;

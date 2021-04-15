@@ -43,7 +43,7 @@ public:
   }
   
   Object3D(String dataset, bool flipX, bool flipY, const int maxVertices, const int maxTriangles){
-    vertices = new Vector3D[maxVertices]();
+    vertices = new Vector3D[maxVertices];
     verticesOriginal = new Vector3D[maxVertices];
     triangles = new Triangle3D[maxTriangles];
     triangleVec = new Vector3D[maxTriangles];
@@ -55,8 +55,27 @@ public:
     }
   }
 
-  Object3D(Object3D o1, Object3D o2){
-    
+  void Copy(Object3D** objects, int objectCount){
+    //copy existing to memory
+    int vCounter = 0;
+    int tCounter = 0;
+    int tOffset = 0;
+
+    for(int i = 0; i < objectCount; i++){
+      for(int j = 0; j < objects[i]->GetVertexAmount(); j++){
+        vertices[vCounter] = objects[i]->GetVertices()[j];
+        verticesOriginal[vCounter] = vertices[vCounter];
+        vCounter++;
+      }
+
+      for(int j = 0; j < objects[i]->GetTriangleAmount(); j++){
+        triangles[tCounter + tOffset] = objects[i]->GetTriangles()[j];
+        triangleVec[tCounter + tOffset] = objects[i]->GetTriangleVector()[j];
+        tCounter++;
+      }
+      
+      tOffset = tOffset + objects[i]->GetTriangleAmount();
+    }
   }
 
   ~Object3D(){
@@ -100,6 +119,10 @@ public:
 
   Triangle3D* GetTriangles(){
     return triangles;
+  }
+  
+  Vector3D* GetTriangleVector(){
+    return triangleVec;
   }
 
   Vector3D* GetVertices(){

@@ -8,10 +8,12 @@
 class Face : public Animation{
 private:
   Light lights[6];
-  Object3D* objects[5];
-  Object3D faceObj = Object3D(faceString, 100, 50);
-  Object3D eyeBrowObj = Object3D(eyeBrowString, 20, 10);
-  Object3D mouthObj = Object3D(mouthString, 50, 25);
+  Object3D* objects[6];
+  Object3D* faceRight[4];
+  Object3D faceLeft = Object3D(60, 30);
+  Object3D faceObj = Object3D(faceString, 25, 10);
+  Object3D eyeBrowObj = Object3D(eyeBrowString, 4, 2);
+  Object3D mouthObj = Object3D(mouthString, 12, 10);
   Object3D fftPlaneObj = Object3D(openHappyString, 120, 120);
   ObjectDeformer sineDeformer = ObjectDeformer(objects, 5);
   ObjectDeformer fftDeformer = ObjectDeformer(&fftPlaneObj);
@@ -36,8 +38,14 @@ public:
     objects[2] = &eyeBrowObj;
     objects[3] = mouthTest.GetObject();//&mouthObj;
     objects[4] = &fftPlaneObj;
+    objects[5] = &faceLeft;
+
+    faceRight[0] = &faceObj;
+    faceRight[1] = eyeTest.GetObject();
+    faceRight[2] = &eyeBrowObj;
+    faceRight[3] = mouthTest.GetObject();//&mouthObj;
   
-    scene = new Scene(objects, lights, 5, 6);
+    scene = new Scene(objects, lights, 6, 6);
 
     for (int i=0; i < 12; i++) {  // print the first 20 bins
       fftData[i] = 0.0f;
@@ -182,7 +190,6 @@ public:
     
     objects[0]->ResetVertices();
     objects[2]->ResetVertices();
-    objects[4]->ResetVertices();
     
     if (i > 550){
       eyeTest.Update(Eye::Surprised, 0.03f);
@@ -252,5 +259,16 @@ public:
     Default(ratio);
     
     mouthTest.Talk(fftData);
+
+    faceLeft.Copy(faceRight, 4);
+
+    faceLeft.Scale(Vector3D(1.0f, 1.0f, -1.0f), Vector3D(0, 100, 0));
+    
+    objects[0]->Enable();
+    objects[1]->Enable();
+    objects[2]->Enable();
+    objects[3]->Enable();
+    objects[4]->Disable();
+    objects[5]->Enable();
   }
 };

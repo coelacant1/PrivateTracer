@@ -9,7 +9,7 @@ private:
   Vector2D imageSize;
   Vector2D offsetPosition;
   Vector2D shiftPosition;
-  uint8_t* file;
+  const uint8_t* file;
   uint8_t padding;
   uint8_t glitch;
   int xPixels;
@@ -25,8 +25,8 @@ private:
   }
   
 public:
-  BMP(Vector2D imageSize, Vector2D offsetPosition, const uint8_t* bmpArray, uint8_t padding){
-    this->file = bmpArray;
+  BMP(Vector2D imageSize, Vector2D offsetPosition, const uint8_t* bmpArray, uint8_t padding) : file(bmpArray){
+    //this->file = bmpArray;
     Serial.println("READING BMP FILE");
     this->imageSize = imageSize;
     this->offsetPosition = offsetPosition;
