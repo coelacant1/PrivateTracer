@@ -140,7 +140,7 @@ public:
     mouthTest.Update(Mouth::Mlem, 0.03f);
     
     float lookDir = Mathematics::Constrain(sinf(i * 3.14159f / 180.0f * 2.0f) * 0.25f, -1.0f, 1.0f);
-      eyeTest.Look(lookDir);
+    eyeTest.Look(lookDir);
     
     objects[0]->ResetVertices();
     objects[2]->ResetVertices();
@@ -263,6 +263,15 @@ public:
     faceLeft.Copy(faceRight, 4);
 
     faceLeft.Scale(Vector3D(1.0f, 1.0f, -1.0f), Vector3D(0, 100, 0));
+
+    float x = sinf(ratio * 3.14159f / 180.0f * 720.0f) * 40.0f;
+    float y = 0;//cosf(ratio * 3.14159f / 180.0f * 1440.0f) * 40.0f;
+
+    objects[5]->MoveRelative(Vector3D(x, y, 600.0f));
+
+    Serial.print(x);
+    Serial.print(" ");
+    Serial.println(y);
     
     objects[0]->Enable();
     objects[1]->Enable();

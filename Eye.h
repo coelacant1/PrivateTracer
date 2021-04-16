@@ -62,6 +62,9 @@ private:
   }
 
   void LinkEye(){
+    eye.GetTriangleVector()[0] = Vector3D(0, 1, 2);
+    eye.GetTriangleVector()[1] = Vector3D(1, 2, 3);
+    
     eye.GetTriangles()[0].p1 = &(eye.GetVertices()[0]);
     eye.GetTriangles()[0].p2 = &(eye.GetVertices()[1]);
     eye.GetTriangles()[0].p3 = &(eye.GetVertices()[2]);

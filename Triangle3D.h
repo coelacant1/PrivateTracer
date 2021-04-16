@@ -14,9 +14,7 @@ public:
 	Vector3D normal = Vector3D();
 
 	Triangle3D(){
-		p1 = new Vector3D();
-		p2 = new Vector3D();
-		p3 = new Vector3D();
+    
 	}
 
 	Triangle3D(Vector3D* p1, Vector3D* p2, Vector3D* p3) {

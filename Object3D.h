@@ -59,22 +59,45 @@ public:
     //copy existing to memory
     int vCounter = 0;
     int tCounter = 0;
-    int tOffset = 0;
+    int vOffset = 0;
 
     for(int i = 0; i < objectCount; i++){
       for(int j = 0; j < objects[i]->GetVertexAmount(); j++){
-        vertices[vCounter] = objects[i]->GetVertices()[j];
-        verticesOriginal[vCounter] = vertices[vCounter];
+        vertices[vCounter] = Vector3D(objects[i]->GetVertices()[j]);
+        verticesOriginal[vCounter] = Vector3D(vertices[vCounter]);
+        /*
+        Serial.print("V ");
+        Serial.print(vCounter);
+        Serial.print(" ");
+        Serial.println(vertices[vCounter].ToString());
+        */
         vCounter++;
       }
 
       for(int j = 0; j < objects[i]->GetTriangleAmount(); j++){
-        triangles[tCounter + tOffset] = objects[i]->GetTriangles()[j];
-        triangleVec[tCounter + tOffset] = objects[i]->GetTriangleVector()[j];
+        //triangles[tCounter + tOffset] = objects[i]->GetTriangles()[j];
+        triangles[tCounter] = Triangle3D();
+        triangleVec[tCounter] = Vector3D(objects[i]->GetTriangleVector()[j]).Add(Vector3D(vOffset, vOffset, vOffset));
+        /*
+        Serial.print("T ");
+        Serial.print(tCounter);
+        Serial.print(" ");
+        Serial.print(vOffset);
+        Serial.print(" ");
+        Serial.print(triangleVec[tCounter].ToString());
+        Serial.print(" ");
+        Serial.println(objects[i]->GetTriangleVector()[j].ToString());
+        */
         tCounter++;
       }
       
-      tOffset = tOffset + objects[i]->GetTriangleAmount();
+      vOffset = vOffset + objects[i]->GetVertexAmount();
+    }
+    
+    for (int i = 0; i < triangleLength; i++) {
+      triangles[i].p1 = &vertices[(int)triangleVec[i].X];
+      triangles[i].p2 = &vertices[(int)triangleVec[i].Y];
+      triangles[i].p3 = &vertices[(int)triangleVec[i].Z];
     }
   }
 
