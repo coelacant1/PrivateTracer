@@ -44,16 +44,22 @@ private:
       }
 
       if(didIntersect){
-        for (int l = 0; l < scene->numLights; l++) {
-          Vector3D lVector = scene->lights[l].p;// - tempInt;
+        if(triangles[triangle]->useMaterial){
+          RGBColor rgbC = triangles[triangle]->GetMaterial()->GetRGB(Vector2D(intersect.X, intersect.Y));
+          color = Vector3D(rgbC.R, rgbC.G, rgbC.B);
+        }
+        else{
+          for (int l = 0; l < scene->numLights; l++) {
+            Vector3D lVector = scene->lights[l].p;// - tempInt;
+    
+            float angle = triangles[triangle]->normal.DotProduct(lVector.UnitSphere());
   
-          float angle = triangles[triangle]->normal.DotProduct(lVector.UnitSphere());
-  
-          if (angle > 0) {
-            float lDistance = scene->lights[l].p.CalculateEuclideanDistance(intersect) / scene->lights[l].falloff;
-            float intensity = 1.0f / (1.0f + lDistance * scene->lights[l].a + powf(lDistance / scene->lights[l].falloff, 2.0f) * scene->lights[l].b);
-            
-            color = color + (scene->lights[l].intensity * angle * intensity);//add intensity drop with distance?
+            if (angle > 0) {
+              float lDistance = scene->lights[l].p.CalculateEuclideanDistance(intersect) / scene->lights[l].falloff;
+              float intensity = 1.0f / (1.0f + lDistance * scene->lights[l].a + powf(lDistance / scene->lights[l].falloff, 2.0f) * scene->lights[l].b);
+              
+              color = color + (scene->lights[l].intensity * angle * intensity);//add intensity drop with distance?
+            }
           }
         }
       }
@@ -135,7 +141,6 @@ public:
   }
 
   Vector3D GetPictureCenter(){
-    Serial.println(pictureCenter.ToString());
     return q.RotateVector(pictureCenter) + p;
   }
 
@@ -179,9 +184,7 @@ public:
     //for each object in the scene, get the triangles
     for(int i = 0; i < scene->numObjects; i++){
       if(scene->objects[i]->IsEnabled()){
-        for (int j = 0; j < scene->objects[i]->GetTriangleAmount(); j++) {
-          numTriangles++;
-        }
+        numTriangles += scene->objects[i]->GetTriangleAmount();
       }
     }
     
@@ -191,14 +194,21 @@ public:
     //for each object in the scene, get the triangles
     for(int i = 0; i < scene->numObjects; i++){
       if(scene->objects[i]->IsEnabled()){
-        //for each triangle in object, project onto 2d surface
+        //for each triangle in object, project onto 2d surface, but pass material
         for (int j = 0; j < scene->objects[i]->GetTriangleAmount(); j++) {
           scene->objects[i]->GetTriangles()[j].Normal();
-          triangles[triangleCounter] = new Triangle2D(q, p, scene->objects[i]->GetTriangles()[j]);
+          
+          if(scene->objects[i]->HasMaterial()){
+            triangles[triangleCounter] = new Triangle2D(q, p, scene->objects[i]->GetTriangles()[j], scene->objects[i]->GetMaterial());
+          }
+          else{
+            triangles[triangleCounter] = new Triangle2D(q, p, scene->objects[i]->GetTriangles()[j]);
+          }
+          
           triangleCounter++;
         }
       }
-	  }
+    }
 
 		for (unsigned int i = 0; i < pixelCount; i++) {
       Vector2D pixelRay = Vector2D(pixelStorage[i].X * scale, pixelStorage[i].Y * scale);
@@ -208,7 +218,7 @@ public:
         color = CheckRasterPixelAntiAlias(2, pixelPixelDistance * scale, scene, triangles, numTriangles, pixelRay);
       }
       else{
-        color = color + CheckRasterPixel(scene, triangles, numTriangles, pixelRay);
+        color = CheckRasterPixel(scene, triangles, numTriangles, pixelRay);
       }
 
       color = color.Divide(255.0f / maxBrightness).Constrain(0.0f, maxBrightness);
@@ -224,9 +234,10 @@ public:
     
 		delete[] triangles;
 	}
- float moveBMP = 0;
+ 
+  float moveBMP = 0;
 
- void BMPRasterize(BMP *bmpImage, float scale, uint8_t maxBrightness){
+  void BMPRasterize(BMP *bmpImage, float scale, uint8_t maxBrightness){
     for (unsigned int i = 0; i < pixelCount; i++) {
       Vector3D camV = p;
       //camV.X = -camV.X;

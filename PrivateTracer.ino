@@ -57,10 +57,10 @@ Camera camMiddTop = Camera(Vector3D(45, 0, 0),   Vector3D(300, 0, -500), 89, &se
 Camera camMiddBot = Camera(Vector3D(-135, 0, 0),  Vector3D(-100, -90, -500), 89, &secondaryPixelString, true, false);
 
 void printRenderTime(){
-  Serial.print("Frame rendered in ");
+  Serial.print("in ");
   float dif = ((float)(micros() - previousTime)) / 1000000.0f;
-  Serial.print(dif, 10);
-  Serial.println(" seconds.");
+  Serial.print(dif, 5);
+  Serial.println("s.");
   
   previousTime = micros();
 }
@@ -127,13 +127,12 @@ void bootAnimation(){
 }
 
 void setup() {
-  /*
-  AudioMemory(100);
-  amp1.gain(4.0);
+  //AudioMemory(100);
+  //amp1.gain(4.0);
 
-  filter1.frequency(750);
-  filter1.octaveControl(4);
-  */
+  //filter1.frequency(750);
+  //filter1.octaveControl(4);
+  
   leds.begin();
   leds.show();
 
@@ -182,7 +181,7 @@ void faceAnimation(){
     //face.Drift(motionProcessor.GetLocalAccelerationFiltered(), motionProcessor.GetLocalAngularVelocityFiltered());
     face.Drift(Vector3D(), motionProcessor.GetLocalAngularVelocity() * 4.0f);
 
-    Serial.println(motionProcessor.GetLocalAngularVelocity().ToString());
+    //Serial.println(motionProcessor.GetLocalAngularVelocity().ToString());
 
     //if not much change for 5 seconds, physics sim
 

@@ -1,6 +1,7 @@
 #pragma once
 #pragma once
 
+#include "Material.h"
 #include "Quaternion.h"
 #include "Triangle3D.h"
 #include "Vector2D.h"
@@ -18,6 +19,8 @@ public:
   Vector3D* t3p1;
   Vector3D* t3e1;
   Vector3D* t3e2;
+  Material* material;
+  bool useMaterial = false;
 
 	Triangle2D(){}
 
@@ -51,11 +54,38 @@ public:
 
     denominator = 1.0f / (v0.X * v1.Y - v1.X * v0.Y);
 	}
+ 
+  Triangle2D(Quaternion camQ, Vector3D camV, Triangle3D t, Material* material) {
+    camV.X = -camV.X;
+    camV.Y = -camV.Y;
+   
+    this->p1 = new Vector2D(camQ.UnrotateVector(Vector3D(*t.p1)) - camV);
+    this->p2 = new Vector2D(camQ.UnrotateVector(Vector3D(*t.p2)) - camV);
+    this->p3 = new Vector2D(camQ.UnrotateVector(Vector3D(*t.p3)) - camV);
+
+    normal = t.Normal();
+    
+    t3p1 = t.p1;
+    t3e1 = &t.edge1;
+    t3e2 = &t.edge2;
+    
+    v0 = *p2 - *p1;
+    v1 = *p3 - *p1;
+
+    denominator = 1.0f / (v0.X * v1.Y - v1.X * v0.Y);
+
+    this->material = material;
+    useMaterial = true;
+  }
 
   ~Triangle2D(){
     delete p1;
     delete p2;
     delete p3;
+  }
+
+  Material* GetMaterial(){
+    return material;
   }
 
 	void Translate(Vector2D p) {

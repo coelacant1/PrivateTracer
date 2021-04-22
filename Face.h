@@ -4,6 +4,7 @@
 #include "Mouth.h"
 #include "FaceObjs.h"
 #include "Animation.h"
+#include "SimpleMaterial.h"
 
 class Face : public Animation{
 private:
@@ -23,6 +24,8 @@ private:
   const int frames = 720;
   
   float fftData[12];
+
+  SimpleMaterial sMat = SimpleMaterial(RGBColor(50, 0, 0));
   
 public:
   Face(){
@@ -44,6 +47,8 @@ public:
     faceRight[1] = eyeTest.GetObject();
     faceRight[2] = &eyeBrowObj;
     faceRight[3] = mouthTest.GetObject();//&mouthObj;
+
+    faceLeft.SetMaterial(&sMat);
   
     scene = new Scene(objects, lights, 6, 6);
 
@@ -269,9 +274,9 @@ public:
 
     objects[5]->MoveRelative(Vector3D(x, y, 600.0f));
 
-    Serial.print(x);
-    Serial.print(" ");
-    Serial.println(y);
+    //Serial.print(x);
+    //Serial.print(" ");
+    //Serial.println(y);
     
     objects[0]->Enable();
     objects[1]->Enable();

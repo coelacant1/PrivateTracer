@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Material.h"
 #include "OBJReader.h"
 #include "Quaternion.h"
 #include "Vector3D.h"
@@ -13,10 +14,12 @@ private:
   Vector3D* vertices;
   Triangle3D* triangles;
   Vector3D* triangleVec;
+  Material* material;
   int vertexLength = 0;
   int triangleLength = 0;
   bool enabled = true;
   bool invert = false;
+  bool useMaterial = false;
   
 public:
   Object3D(const int maxVertices, const int maxTriangles){
@@ -55,6 +58,11 @@ public:
     }
   }
 
+  void SetMaterial(Material* material){
+    this->material = material;
+    useMaterial = true;
+  }
+
   void Copy(Object3D** objects, int objectCount){
     //copy existing to memory
     int vCounter = 0;
@@ -65,29 +73,12 @@ public:
       for(int j = 0; j < objects[i]->GetVertexAmount(); j++){
         vertices[vCounter] = Vector3D(objects[i]->GetVertices()[j]);
         verticesOriginal[vCounter] = Vector3D(vertices[vCounter]);
-        /*
-        Serial.print("V ");
-        Serial.print(vCounter);
-        Serial.print(" ");
-        Serial.println(vertices[vCounter].ToString());
-        */
         vCounter++;
       }
 
       for(int j = 0; j < objects[i]->GetTriangleAmount(); j++){
-        //triangles[tCounter + tOffset] = objects[i]->GetTriangles()[j];
         triangles[tCounter] = Triangle3D();
         triangleVec[tCounter] = Vector3D(objects[i]->GetTriangleVector()[j]).Add(Vector3D(vOffset, vOffset, vOffset));
-        /*
-        Serial.print("T ");
-        Serial.print(tCounter);
-        Serial.print(" ");
-        Serial.print(vOffset);
-        Serial.print(" ");
-        Serial.print(triangleVec[tCounter].ToString());
-        Serial.print(" ");
-        Serial.println(objects[i]->GetTriangleVector()[j].ToString());
-        */
         tCounter++;
       }
       
@@ -156,12 +147,20 @@ public:
     return verticesOriginal;
   }
 
+  Material* GetMaterial(){
+    return material;
+  }
+
   int GetTriangleAmount(){
     return triangleLength;
   }
 
   int GetVertexAmount(){
     return vertexLength;
+  }
+
+  bool HasMaterial(){
+    return useMaterial;
   }
 
   void ResetVertices(){

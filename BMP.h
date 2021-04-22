@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Material.h"
 #include "Pixel.h"
 #include "Vector2D.h"
 
 //Converts gif to RGB XY pixel matrix
-class BMP{
+class BMP : public Material {
 private:
   Vector2D imageSize;
   Vector2D offsetPosition;

@@ -69,7 +69,5 @@ public:
     objects[4]->ResetVertices();
     objects[5]->ResetVertices();
     objects[6]->ResetVertices();
-
-    
   }
 };
