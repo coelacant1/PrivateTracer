@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Mathematics.h"
+#include "Quaternion.h"
+#include "Vector3D.h"
+
 class RGBColor{
   private:
 
@@ -40,6 +44,38 @@ class RGBColor{
       sB = sB < 0 ? 0 : sB;
       
       return RGBColor(sR, sG, sB);
+    }
+
+    RGBColor HueShift(float hueDeg){
+      //hueDeg = (int)hueDeg % 360;
+      //shift color space by rotating rgb vector about diagonal vector (1, 1, 1)
+      float hueRad = hueDeg * Mathematics::MPI / 180.0f;
+      float hueRat = 0.5f * sinf(hueRad / 2.0f);//2.0f for quaternion creation
+      Vector3D rgbVec = Vector3D(R, G, B);
+      Quaternion q = Quaternion(cosf(hueRad / 2.0f), hueRat, hueRat, hueRat);
+
+      rgbVec = q.RotateVector(rgbVec).Constrain(0.0f, 255.0f);
+
+      Serial.print(hueDeg);
+      Serial.print(",");
+      Serial.print(rgbVec.X);
+      Serial.print(",");
+      Serial.print(rgbVec.Y);
+      Serial.print(",");
+      Serial.print(rgbVec.Z);
+      Serial.println(",");
+
+      return RGBColor(rgbVec.X, rgbVec.Y, rgbVec.Z);
+    }
+
+    static RGBColor InterpolateColors(RGBColor a, RGBColor b, float ratio){
+      RGBColor c;
+
+      c.R = a.R * (1.0f - ratio) + b.R * ratio;
+      c.G = a.G * (1.0f - ratio) + b.G * ratio;
+      c.B = a.B * (1.0f - ratio) + b.B * ratio;
+
+      return c;
     }
     
     String ToString(){

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "BMP.h"
+#include "BMPImages.h"
 #include "Eye.h"
 #include "Mouth.h"
 #include "FaceObjs.h"
@@ -19,13 +21,15 @@ private:
   ObjectDeformer sineDeformer = ObjectDeformer(objects, 5);
   ObjectDeformer fftDeformer = ObjectDeformer(&fftPlaneObj);
   
+  
   Eye eyeTest;
   Mouth mouthTest;
   const int frames = 720;
   
   float fftData[12];
 
-  SimpleMaterial sMat = SimpleMaterial(RGBColor(50, 0, 0));
+  SimpleMaterial sMat = SimpleMaterial(RGBColor(255, 0, 0));
+  BMP colorTestBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), colorTest, 0);
   
 public:
   Face(){
@@ -48,7 +52,12 @@ public:
     faceRight[2] = &eyeBrowObj;
     faceRight[3] = mouthTest.GetObject();//&mouthObj;
 
-    faceLeft.SetMaterial(&sMat);
+    objects[0]->SetMaterial(&colorTestBMP);
+    objects[1]->SetMaterial(&colorTestBMP);
+    objects[2]->SetMaterial(&colorTestBMP);
+    objects[3]->SetMaterial(&colorTestBMP);
+    objects[4]->SetMaterial(&colorTestBMP);
+    objects[5]->SetMaterial(&sMat);
   
     scene = new Scene(objects, lights, 6, 6);
 
@@ -223,8 +232,8 @@ public:
 
     //objects[2]->Scale(Vector3D(1.0f + sinf(i * 3.14159f / 180.0f * 1.0f) * 0.025f, 1.0f + sinf(i * 3.14159f / 180.0f * 10.0f) * 0.025f, 1.0f), Vector3D(0, 0, 0));
     
-    sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 100.0f, sinf(-i * 3.14159f / 180.0f * 0.1f), 0.1f, 200.0f, ObjectDeformer::ZAxis);
-    sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 0.1f), 0.02f, 1.0f, ObjectDeformer::XAxis);
+    //sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 100.0f, sinf(-i * 3.14159f / 180.0f * 0.1f), 0.1f, 200.0f, ObjectDeformer::ZAxis);
+    //sineDeformer.SineWaveSurfaceDeform(Vector3D(-150, 100, 0), sinf(i * 3.14159f / 180.0f * 1.0f) * 2.0f, sinf(i * 3.14159f / 180.0f * 0.1f), 0.02f, 1.0f, ObjectDeformer::XAxis);
 
   }
 
@@ -265,23 +274,27 @@ public:
     
     mouthTest.Talk(fftData);
 
+    sMat.HueShift(ratio * 360 * 4);
+
     faceLeft.Copy(faceRight, 4);
 
     faceLeft.Scale(Vector3D(1.0f, 1.0f, -1.0f), Vector3D(0, 100, 0));
 
     float x = sinf(ratio * 3.14159f / 180.0f * 720.0f) * 40.0f;
-    float y = 0;//cosf(ratio * 3.14159f / 180.0f * 1440.0f) * 40.0f;
+    //float y = cosf(ratio * 3.14159f / 180.0f * 1440.0f) * 40.0f;
 
-    objects[5]->MoveRelative(Vector3D(x, y, 600.0f));
+    //objects[5]->MoveRelative(Vector3D(x, y, 600.0f));
+    objects[5]->Rotate(Vector3D(0, -x * 0.25f, 0), Vector3D(0, 0, 0));
+    objects[5]->MoveRelative(Vector3D(x, 0, 600.0f));
 
     //Serial.print(x);
     //Serial.print(" ");
     //Serial.println(y);
     
-    objects[0]->Enable();
-    objects[1]->Enable();
-    objects[2]->Enable();
-    objects[3]->Enable();
+    objects[0]->Disable();
+    objects[1]->Disable();
+    objects[2]->Disable();
+    objects[3]->Disable();
     objects[4]->Disable();
     objects[5]->Enable();
   }

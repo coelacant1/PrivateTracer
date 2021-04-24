@@ -7,10 +7,16 @@
 class SimpleMaterial : public Material {
 private:
   RGBColor rgb;
+  RGBColor baseRGB;
   
 public:
   SimpleMaterial(RGBColor rgb){
     this->rgb = rgb;
+    this->baseRGB = rgb;
+  }
+
+  void HueShift(float hueDeg){
+    rgb = baseRGB.HueShift(hueDeg);
   }
   
   RGBColor GetRGB(Vector2D xyPosition){

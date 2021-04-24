@@ -37,9 +37,9 @@ Boot boot;
 Face face;
 PhysicsSimulator physicsSim;
 
-BMP openInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), openInvader, 0);
-BMP closeInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), closeInvader, 0);
-BMP colorTestBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), colorTest, 0);
+//BMP openInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), openInvader, 0);
+//BMP closeInvaderBMP = BMP(Vector2D(250, 250), Vector2D(-150, 20), closeInvader, 0);
+//BMP colorTestBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), colorTest, 0);
 
 BMP bootBMP = BMP(Vector2D(800, 3200), Vector2D(-200, -3200), bootImage, 2);
 BMP crashBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), crashImage, 0);
@@ -88,7 +88,7 @@ void updateLEDs(Scene* scene){
   }
   
   leds.show();
-  printRenderTime();
+  //printRenderTime();
 }
 
 void updateLEDs(BMP* bmp, uint8_t brightnessLevel){
@@ -164,7 +164,7 @@ void faceAnimation(){
     }
     
 
-    motionProcessor.Update();
+    //motionProcessor.Update();
     
     Vector3D angularVelocity = motionProcessor.GetLocalAngularVelocity();
     
@@ -192,8 +192,8 @@ void faceAnimation(){
       updateLEDs(face.GetScene());
     }
     
-    Serial.print(i);
-    Serial.print(" ");
+    //Serial.print(i);
+    //Serial.print(" ");
   }
 }
 
