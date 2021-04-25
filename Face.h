@@ -31,7 +31,7 @@ private:
   
   RGBColor spectrum[6] = {RGBColor(255, 0, 0), RGBColor(255, 255, 0), RGBColor(0, 255, 0), RGBColor(0, 255, 255), RGBColor(0, 0, 255), RGBColor(255, 0, 255)};
 
-  SimpleMaterial sMat = SimpleMaterial(RGBColor(255, 0, 0));
+  SimpleMaterial sMat = SimpleMaterial(RGBColor(128, 0, 0));
   GradientMaterial gMat = GradientMaterial(6, spectrum, 150.0f);
   BMP colorTestBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), colorTest, 0);
   
@@ -56,12 +56,12 @@ public:
     faceRight[2] = &eyeBrowObj;
     faceRight[3] = mouthTest.GetObject();//&mouthObj;
 
-    objects[0]->SetMaterial(&sMat);
-    objects[1]->SetMaterial(&sMat);
-    objects[2]->SetMaterial(&sMat);
-    objects[3]->SetMaterial(&sMat);
-    objects[4]->SetMaterial(&sMat);
-    objects[5]->SetMaterial(&gMat);
+    objects[0]->SetMaterial(&gMat);
+    objects[1]->SetMaterial(&gMat);
+    objects[2]->SetMaterial(&gMat);
+    objects[3]->SetMaterial(&gMat);
+    //objects[4]->SetMaterial(&sMat);
+    objects[5]->SetMaterial(&sMat);
   
     scene = new Scene(objects, lights, 6, 6);
 
@@ -272,21 +272,25 @@ public:
   }
 
   void Update(float ratio){
-    //Boop(ratio);
+    Boop(ratio);
     //Rave(ratio);
-    Default(ratio);
+    //Default(ratio);
     
     mouthTest.Talk(fftData);
+    
+    float x = sinf(ratio * 3.14159f / 180.0f * 720.0f) * 50.0f;
+    //float y = cosf(ratio * 3.14159f / 180.0f * 1440.0f) * 50.0f;
 
     sMat.HueShift(ratio * 360 * 4);
-    gMat.SetRotationAngle(ratio * 360 * 2);
+    gMat.HueShift(ratio * 360 * 4);
+    //gMat.SetRotationAngle(ratio * 360 * 2);
+    gMat.SetGradientPeriod(250.0f);// + x * 2.0f);
+    //gMat.SetPositionOffset(Vector2D(x * 3.0f, 0.0f));
 
     faceLeft.Copy(faceRight, 4);
 
     faceLeft.Scale(Vector3D(1.0f, 1.0f, -1.0f), Vector3D(0, 100, 0));
 
-    float x = sinf(ratio * 3.14159f / 180.0f * 720.0f) * 40.0f;
-    //float y = cosf(ratio * 3.14159f / 180.0f * 1440.0f) * 40.0f;
 
     //objects[5]->MoveRelative(Vector3D(x, y, 600.0f));
     objects[5]->Rotate(Vector3D(0, -x * 0.25f, 0), Vector3D(0, 0, 0));
@@ -296,11 +300,11 @@ public:
     //Serial.print(" ");
     //Serial.println(y);
     
-    objects[0]->Disable();
-    objects[1]->Disable();
-    objects[2]->Disable();
-    objects[3]->Disable();
+    objects[0]->Enable();
+    objects[1]->Enable();
+    objects[2]->Enable();
+    objects[3]->Enable();
     objects[4]->Disable();
-    objects[5]->Enable();
+    objects[5]->Disable();
   }
 };

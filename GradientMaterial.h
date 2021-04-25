@@ -8,6 +8,7 @@
 class GradientMaterial : public Material {
 private:
   RGBColor* rgbColors;
+  RGBColor* baseRGBColors;
   uint8_t colorCount;
   Vector2D positionOffset;
   Vector2D rotationOffset;//point to rotate about
@@ -16,9 +17,16 @@ private:
   
 public:
   GradientMaterial(uint8_t colorCount, RGBColor* rgbColors, float gradientPeriod){
-    this->rgbColors = rgbColors;
     this->colorCount = colorCount;
     this->gradientPeriod = gradientPeriod;
+
+    this->rgbColors = new RGBColor[colorCount];
+    this->baseRGBColors = new RGBColor[colorCount];
+
+    for(int i = 0; i < colorCount; i++){
+      this->rgbColors[i] = rgbColors[i];
+      this->baseRGBColors[i] = rgbColors[i];
+    }
   }
 
   //x 0->1 mapping all counts of colors, linearly interpolating
@@ -38,7 +46,16 @@ public:
   void SetRotationAngle(float rotationAngle){
     this->rotationAngle = rotationAngle;
   }
-  
+
+  void SetGradientPeriod(float gradientPeriod){
+    this->gradientPeriod = gradientPeriod;  
+  }
+
+  void HueShift(float hueDeg){
+    for(int i = 0; i < colorCount; i++){
+      rgbColors[i] = baseRGBColors[i].HueShift(hueDeg);
+    }
+  }
   
   RGBColor GetRGB(Vector2D xyPosition){
     if(rotationAngle != 0){
@@ -54,11 +71,13 @@ public:
     //map from modulo'd x value to color count minimum
     float ratio = Mathematics::Map(pos, 0, gradientPeriod, 0, colorCount);
     int startBox = floor(ratio);
-    int endBox = floor(ratio) >= colorCount ? 0 : colorCount;
-    float mu = Mathematics::Map(ratio, startBox, endBox, 0.0f, 1.0f);//calculate mu between boxes
+    int endBox = startBox + 1 >= colorCount ? 0 : startBox + 1;
+
+    float mu = Mathematics::Map(ratio, startBox, startBox + 1, 0.0f, 1.0f);//calculate mu between boxes
 
     RGBColor rgb = RGBColor::InterpolateColors(rgbColors[startBox], rgbColors[endBox], mu);
 
+    /*
     Serial.print(xyPosition.X);
     Serial.print(",");
     Serial.print(ratio);
@@ -69,7 +88,7 @@ public:
     Serial.print(",");
     Serial.print(mu);
     Serial.println(",");
-    
+    */
     return rgb;
   }
 };

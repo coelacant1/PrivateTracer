@@ -45,6 +45,10 @@ private:
 
       if(didIntersect){
         if(triangles[triangle]->useMaterial){
+          Vector3D rotateRay = q.RotateVector(Vector3D(pixelRay.X, pixelRay.Y, 0).Subtract(p));
+          
+          pixelRay = Vector2D(-rotateRay.X, rotateRay.Y);
+          
           RGBColor rgbC = triangles[triangle]->GetMaterial()->GetRGB(pixelRay);
           color = Vector3D(rgbC.R, rgbC.G, rgbC.B);
         }
