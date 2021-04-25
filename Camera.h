@@ -45,7 +45,7 @@ private:
 
       if(didIntersect){
         if(triangles[triangle]->useMaterial){
-          RGBColor rgbC = triangles[triangle]->GetMaterial()->GetRGB(Vector2D(intersect.X, intersect.Y));
+          RGBColor rgbC = triangles[triangle]->GetMaterial()->GetRGB(pixelRay);
           color = Vector3D(rgbC.R, rgbC.G, rgbC.B);
         }
         else{

@@ -7,6 +7,7 @@
 #include "FaceObjs.h"
 #include "Animation.h"
 #include "SimpleMaterial.h"
+#include "GradientMaterial.h"
 
 class Face : public Animation{
 private:
@@ -27,8 +28,11 @@ private:
   const int frames = 720;
   
   float fftData[12];
+  
+  RGBColor spectrum[6] = {RGBColor(255, 0, 0), RGBColor(255, 255, 0), RGBColor(0, 255, 0), RGBColor(0, 255, 255), RGBColor(0, 0, 255), RGBColor(255, 0, 255)};
 
   SimpleMaterial sMat = SimpleMaterial(RGBColor(255, 0, 0));
+  GradientMaterial gMat = GradientMaterial(6, spectrum, 150.0f);
   BMP colorTestBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), colorTest, 0);
   
 public:
@@ -52,12 +56,12 @@ public:
     faceRight[2] = &eyeBrowObj;
     faceRight[3] = mouthTest.GetObject();//&mouthObj;
 
-    objects[0]->SetMaterial(&colorTestBMP);
-    objects[1]->SetMaterial(&colorTestBMP);
-    objects[2]->SetMaterial(&colorTestBMP);
-    objects[3]->SetMaterial(&colorTestBMP);
-    objects[4]->SetMaterial(&colorTestBMP);
-    objects[5]->SetMaterial(&sMat);
+    objects[0]->SetMaterial(&sMat);
+    objects[1]->SetMaterial(&sMat);
+    objects[2]->SetMaterial(&sMat);
+    objects[3]->SetMaterial(&sMat);
+    objects[4]->SetMaterial(&sMat);
+    objects[5]->SetMaterial(&gMat);
   
     scene = new Scene(objects, lights, 6, 6);
 
@@ -275,6 +279,7 @@ public:
     mouthTest.Talk(fftData);
 
     sMat.HueShift(ratio * 360 * 4);
+    gMat.SetRotationAngle(ratio * 360 * 2);
 
     faceLeft.Copy(faceRight, 4);
 

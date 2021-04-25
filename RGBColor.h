@@ -55,7 +55,7 @@ class RGBColor{
       Quaternion q = Quaternion(cosf(hueRad / 2.0f), hueRat, hueRat, hueRat);
 
       rgbVec = q.RotateVector(rgbVec).Constrain(0.0f, 255.0f);
-
+      /*
       Serial.print(hueDeg);
       Serial.print(",");
       Serial.print(rgbVec.X);
@@ -64,7 +64,7 @@ class RGBColor{
       Serial.print(",");
       Serial.print(rgbVec.Z);
       Serial.println(",");
-
+      */
       return RGBColor(rgbVec.X, rgbVec.Y, rgbVec.Z);
     }
 

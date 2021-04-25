@@ -205,10 +205,10 @@ Quaternion Quaternion::Power(Quaternion exponent) {
 
 	return Quaternion
 	{
-		pow(current.W, exponent.W),
-		pow(current.X, exponent.X),
-		pow(current.Y, exponent.Y),
-		pow(current.Z, exponent.Z)
+		powf(current.W, exponent.W),
+		powf(current.X, exponent.X),
+		powf(current.Y, exponent.Y),
+		powf(current.Z, exponent.Z)
 	};
 }
 
@@ -217,10 +217,10 @@ Quaternion Quaternion::Power(float exponent) {
 
 	return Quaternion
 	{
-		pow(current.W, exponent),
-		pow(current.X, exponent),
-		pow(current.Y, exponent),
-		pow(current.Z, exponent)
+		powf(current.W, exponent),
+		powf(current.X, exponent),
+		powf(current.Y, exponent),
+		powf(current.Z, exponent)
 	};
 }
 
