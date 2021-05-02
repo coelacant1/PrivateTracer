@@ -22,8 +22,8 @@ Vector2D::Vector2D(const Vector3D& vector) {
 
 Vector2D Vector2D::Absolute() {
 	return Vector2D{
-		abs(this->X),
-		abs(this->Y)
+		fabsf(this->X),
+		fabsf(this->Y)
 	};
 }
 

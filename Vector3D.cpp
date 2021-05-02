@@ -20,9 +20,9 @@ Vector3D::Vector3D(float X, float Y, float Z) {
 
 Vector3D Vector3D::Absolute() {
 	return Vector3D{
-		fabs(this->X),
-		fabs(this->Y),
-		fabs(this->Z)
+		fabsf(this->X),
+		fabsf(this->Y),
+		fabsf(this->Z)
 	};
 }
 

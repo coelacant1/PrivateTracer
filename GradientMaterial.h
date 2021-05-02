@@ -14,11 +14,13 @@ private:
   Vector2D rotationOffset;//point to rotate about
   float gradientPeriod;
   float rotationAngle;//rotate input xyPosition
+  bool isRadial;
   
 public:
-  GradientMaterial(uint8_t colorCount, RGBColor* rgbColors, float gradientPeriod){
+  GradientMaterial(uint8_t colorCount, RGBColor* rgbColors, float gradientPeriod, bool isRadial){
     this->colorCount = colorCount;
     this->gradientPeriod = gradientPeriod;
+    this->isRadial = isRadial;
 
     this->rgbColors = new RGBColor[colorCount];
     this->baseRGBColors = new RGBColor[colorCount];
@@ -63,11 +65,21 @@ public:
 
       xyPosition = temp.RotateVector(xyPosition);
     }
-    
-    //from x position, fit into bucket ratio
-    //modulo x value into x range from start position to end position
-    float pos = fabs(fmodf(xyPosition.X + positionOffset.X, gradientPeriod));
 
+    float pos = 0;
+    xyPosition = xyPosition - positionOffset;
+    
+    if (isRadial){
+      pos = sqrtf(xyPosition.X * xyPosition.X + xyPosition.Y * xyPosition.Y);
+      pos = fabs(fmodf(pos, gradientPeriod));
+    }
+    else{
+      //from x position, fit into bucket ratio
+      //modulo x value into x range from start position to end position
+      pos = fabs(fmodf(xyPosition.X, gradientPeriod));
+    }
+    
+    
     //map from modulo'd x value to color count minimum
     float ratio = Mathematics::Map(pos, 0, gradientPeriod, 0, colorCount);
     int startBox = floor(ratio);

@@ -45,7 +45,7 @@ BMP bootBMP = BMP(Vector2D(800, 3200), Vector2D(-200, -3200), bootImage, 2);
 BMP crashBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), crashImage, 0);
 BMP dedBMP = BMP(Vector2D(200, 200), Vector2D(20, 20), dedImage, 0);
 
-const uint8_t MaxBrightness = 20;
+const uint8_t MaxBrightness = 30;
 long screensaverTime = 0;
 
 Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &primaryPixelString, true, false);
@@ -179,9 +179,9 @@ void faceAnimation(){
     face.Update(i);
     face.FadeIn(0.0125f);
     //face.Drift(motionProcessor.GetLocalAccelerationFiltered(), motionProcessor.GetLocalAngularVelocityFiltered());
-    face.Drift(Vector3D(), motionProcessor.GetLocalAngularVelocity() * 4.0f);
+    face.Drift(motionProcessor.GetLocalAcceleration(), Vector3D());//, motionProcessor.GetLocalAngularVelocity() * 4.0f);
 
-    //Serial.println(motionProcessor.GetLocalAngularVelocity().ToString());
+    //Serial.println(motionProcessor.GetLocalAcceleration().ToString());
 
     //if not much change for 5 seconds, physics sim
 

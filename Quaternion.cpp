@@ -244,10 +244,10 @@ Quaternion Quaternion::Absolute() {
 
 	return Quaternion
 	{
-		fabs(current.W),
-		fabs(current.X),
-		fabs(current.Y),
-		fabs(current.Z)
+		fabsf(current.W),
+		fabsf(current.X),
+		fabsf(current.Y),
+		fabsf(current.Z)
 	};
 }
 

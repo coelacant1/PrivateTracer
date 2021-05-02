@@ -8,6 +8,7 @@
 #include "Animation.h"
 #include "SimpleMaterial.h"
 #include "GradientMaterial.h"
+#include "SimplexNoise.h"
 
 class Face : public Animation{
 private:
@@ -18,10 +19,9 @@ private:
   Object3D faceObj = Object3D(faceString, 25, 10);
   Object3D eyeBrowObj = Object3D(eyeBrowString, 4, 2);
   Object3D mouthObj = Object3D(mouthString, 12, 10);
-  Object3D fftPlaneObj = Object3D(openHappyString, 120, 120);
+  Object3D backgroundObj = Object3D(triangleString, 4, 2);
   ObjectDeformer sineDeformer = ObjectDeformer(objects, 5);
-  ObjectDeformer fftDeformer = ObjectDeformer(&fftPlaneObj);
-  
+  //ObjectDeformer fftDeformer = ObjectDeformer(&fftPlaneObj);
   
   Eye eyeTest;
   Mouth mouthTest;
@@ -30,10 +30,17 @@ private:
   float fftData[12];
   
   RGBColor spectrum[6] = {RGBColor(255, 0, 0), RGBColor(255, 255, 0), RGBColor(0, 255, 0), RGBColor(0, 255, 255), RGBColor(0, 0, 255), RGBColor(255, 0, 255)};
+  //RGBColor spectrum[6] = {RGBColor(255, 0, 0), RGBColor(0, 0, 0), RGBColor(0, 255, 0), RGBColor(0, 0, 0), RGBColor(0, 0, 255), RGBColor(0, 0, 0)};
+  //RGBColor spectrum[3] = {RGBColor(255, 0, 0), RGBColor(0, 255, 0), RGBColor(0, 0, 255)};
+  //RGBColor spectrum[2] = {RGBColor(255, 0, 0), RGBColor(0, 0, 255)};
 
   SimpleMaterial sMat = SimpleMaterial(RGBColor(128, 0, 0));
-  GradientMaterial gMat = GradientMaterial(6, spectrum, 150.0f);
+  GradientMaterial gMat = GradientMaterial(6, spectrum, 150.0f, true);
   BMP colorTestBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), colorTest, 0);
+
+  
+  GradientMaterial gNoiseMat = GradientMaterial(6, spectrum, 1.0f, false);
+  SimplexNoise sNoise = SimplexNoise(0, &gNoiseMat);
   
 public:
   Face(){
@@ -48,7 +55,7 @@ public:
     objects[1] = eyeTest.GetObject();
     objects[2] = &eyeBrowObj;
     objects[3] = mouthTest.GetObject();//&mouthObj;
-    objects[4] = &fftPlaneObj;
+    objects[4] = &backgroundObj;
     objects[5] = &faceLeft;
 
     faceRight[0] = &faceObj;
@@ -56,12 +63,12 @@ public:
     faceRight[2] = &eyeBrowObj;
     faceRight[3] = mouthTest.GetObject();//&mouthObj;
 
-    objects[0]->SetMaterial(&gMat);
-    objects[1]->SetMaterial(&gMat);
-    objects[2]->SetMaterial(&gMat);
-    objects[3]->SetMaterial(&gMat);
-    //objects[4]->SetMaterial(&sMat);
-    objects[5]->SetMaterial(&sMat);
+    objects[0]->SetMaterial(&sNoise);
+    objects[1]->SetMaterial(&sNoise);
+    objects[2]->SetMaterial(&sNoise);
+    objects[3]->SetMaterial(&sNoise);
+    objects[4]->SetMaterial(&sNoise);
+    objects[5]->SetMaterial(&gMat);
   
     scene = new Scene(objects, lights, 6, 6);
 
@@ -104,7 +111,6 @@ public:
     objects[1]->Enable();
     objects[2]->Enable();
     objects[3]->Enable();
-    objects[4]->Disable();
     
     objects[0]->ResetVertices();
     objects[2]->ResetVertices();
@@ -152,7 +158,6 @@ public:
     objects[1]->Enable();
     objects[2]->Enable();
     objects[3]->Disable();
-    objects[4]->Enable();
     
     eyeTest.Update(Eye::Neutral, 0.02f);
     mouthTest.Update(Mouth::Mlem, 0.03f);
@@ -204,7 +209,6 @@ public:
     objects[1]->Enable();
     objects[2]->Enable();
     objects[3]->Enable();
-    objects[4]->Disable();
     
     objects[0]->ResetVertices();
     objects[2]->ResetVertices();
@@ -256,19 +260,16 @@ public:
     objects[1]->Rotate(angularVelocity, Vector3D(0, 100, 0));
     objects[2]->Rotate(angularVelocity, Vector3D(0, 100, 0));
     objects[3]->Rotate(angularVelocity, Vector3D(0, 100, 0));
-    objects[4]->Rotate(angularVelocity, Vector3D(0, 100, 0));
     
     objects[0]->MoveRelative(acceleration);
     objects[1]->MoveRelative(acceleration);
     objects[2]->MoveRelative(acceleration);
     objects[3]->MoveRelative(acceleration);
-    objects[4]->MoveRelative(acceleration);
 
     objects[0]->Scale(zMod, Vector3D(0, 100, 0));
     objects[1]->Scale(zMod, Vector3D(0, 100, 0));
     objects[2]->Scale(zMod, Vector3D(0, 100, 0));
     objects[3]->Scale(zMod, Vector3D(0, 100, 0));
-    objects[4]->Scale(zMod, Vector3D(0, 100, 0));
   }
 
   void Update(float ratio){
@@ -279,26 +280,36 @@ public:
     mouthTest.Talk(fftData);
     
     float x = sinf(ratio * 3.14159f / 180.0f * 720.0f) * 50.0f;
-    //float y = cosf(ratio * 3.14159f / 180.0f * 1440.0f) * 50.0f;
+    float y = cosf(ratio * 3.14159f / 180.0f * 720.0f) * 50.0f;
 
     sMat.HueShift(ratio * 360 * 4);
-    gMat.HueShift(ratio * 360 * 4);
+    //gMat.HueShift(ratio * 360 * 4);
     //gMat.SetRotationAngle(ratio * 360 * 2);
-    gMat.SetGradientPeriod(250.0f);// + x * 2.0f);
-    //gMat.SetPositionOffset(Vector2D(x * 3.0f, 0.0f));
+    gMat.SetGradientPeriod(150.0f + x * 1.5f);
+    gMat.SetPositionOffset(Vector2D(x * 2.0f, 100.0f + y * 2.0f));
+    //gMat.SetPositionOffset(Vector2D(0.0f, 100.0f));
+
+    float linSweep = ratio > 0.5f ? 1.0f - ratio : ratio;
+    float zShift = linSweep * 500.0f;
+    float sShift = linSweep * 0.001f + 0.005f;
+
+    sNoise.SetScale(Vector3D(sShift, sShift, sShift));
+    sNoise.SetZPosition(zShift);
+
+    Serial.print(x);
+    Serial.print(",");
+    Serial.print(sShift);
+    Serial.print(",");
+    Serial.println(zShift);
 
     faceLeft.Copy(faceRight, 4);
 
     faceLeft.Scale(Vector3D(1.0f, 1.0f, -1.0f), Vector3D(0, 100, 0));
 
+    //faceLeft.Rotate(Vector3D(0, -x * 0.5f, 0), Vector3D(0, 0, 0));
 
-    //objects[5]->MoveRelative(Vector3D(x, y, 600.0f));
     objects[5]->Rotate(Vector3D(0, -x * 0.25f, 0), Vector3D(0, 0, 0));
     objects[5]->MoveRelative(Vector3D(x, 0, 600.0f));
-
-    //Serial.print(x);
-    //Serial.print(" ");
-    //Serial.println(y);
     
     objects[0]->Enable();
     objects[1]->Enable();
