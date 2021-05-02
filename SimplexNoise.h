@@ -230,7 +230,7 @@ public:
     if(t3 < 0) n3 = 0.0f;
     else {
       t3 *= t3;
-      n3 = t3 * t3 * grad3[gi3].DotProduct(Vector3D(x3, y3, z0));//dot(grad3[gi3], x3, y3, z3);
+      n3 = t3 * t3 * grad3[gi3].DotProduct(Vector3D(x3, y3, z3));//dot(grad3[gi3], x3, y3, z3);
     }
     
     // Add contributions from each corner to get the final noise value.
@@ -256,11 +256,7 @@ public:
     xyz = xyz * noiseScale;
 
     float noise = Noise(xyz.X, xyz.Y, xyz.Z);
-    /*
-    Serial.print(noise);
-    Serial.print("\t");
-    Serial.println(xyz.ToString());
-    */
+    
     return gradientMaterial->GetRGB(Vector2D(noise, 0));
   }
 };

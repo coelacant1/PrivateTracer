@@ -29,9 +29,10 @@ private:
   
   float fftData[12];
   
-  RGBColor spectrum[6] = {RGBColor(255, 0, 0), RGBColor(255, 255, 0), RGBColor(0, 255, 0), RGBColor(0, 255, 255), RGBColor(0, 0, 255), RGBColor(255, 0, 255)};
+  //RGBColor spectrum[6] = {RGBColor(255, 0, 0), RGBColor(255, 255, 0), RGBColor(0, 255, 0), RGBColor(0, 255, 255), RGBColor(0, 0, 255), RGBColor(255, 0, 255)};
   //RGBColor spectrum[6] = {RGBColor(255, 0, 0), RGBColor(0, 0, 0), RGBColor(0, 255, 0), RGBColor(0, 0, 0), RGBColor(0, 0, 255), RGBColor(0, 0, 0)};
   //RGBColor spectrum[3] = {RGBColor(255, 0, 0), RGBColor(0, 255, 0), RGBColor(0, 0, 255)};
+  RGBColor spectrum[4] = {RGBColor(0, 0, 0), RGBColor(255, 0, 0), RGBColor(0, 255, 0), RGBColor(0, 0, 255)};
   //RGBColor spectrum[2] = {RGBColor(255, 0, 0), RGBColor(0, 0, 255)};
 
   SimpleMaterial sMat = SimpleMaterial(RGBColor(128, 0, 0));
@@ -39,8 +40,8 @@ private:
   BMP colorTestBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), colorTest, 0);
 
   
-  GradientMaterial gNoiseMat = GradientMaterial(6, spectrum, 1.0f, false);
-  SimplexNoise sNoise = SimplexNoise(0, &gNoiseMat);
+  GradientMaterial gNoiseMat = GradientMaterial(4, spectrum, 2.0f, false);
+  SimplexNoise sNoise = SimplexNoise(1, &gNoiseMat);
   
 public:
   Face(){
@@ -279,8 +280,8 @@ public:
     
     mouthTest.Talk(fftData);
     
-    float x = sinf(ratio * 3.14159f / 180.0f * 720.0f) * 50.0f;
-    float y = cosf(ratio * 3.14159f / 180.0f * 720.0f) * 50.0f;
+    float x = sinf(ratio * 3.14159f / 180.0f * 360.0f) * 50.0f;
+    float y = cosf(ratio * 3.14159f / 180.0f * 360.0f) * 50.0f;
 
     sMat.HueShift(ratio * 360 * 4);
     //gMat.HueShift(ratio * 360 * 4);
@@ -288,20 +289,22 @@ public:
     gMat.SetGradientPeriod(150.0f + x * 1.5f);
     gMat.SetPositionOffset(Vector2D(x * 2.0f, 100.0f + y * 2.0f));
     //gMat.SetPositionOffset(Vector2D(0.0f, 100.0f));
+    
+    gNoiseMat.HueShift(ratio * 360 * 2);
 
     float linSweep = ratio > 0.5f ? 1.0f - ratio : ratio;
     float zShift = linSweep * 500.0f;
-    float sShift = linSweep * 0.001f + 0.005f;
+    float sShift = linSweep * 0.0025f + 0.005f;
 
     sNoise.SetScale(Vector3D(sShift, sShift, sShift));
-    sNoise.SetZPosition(zShift);
-
+    sNoise.SetZPosition(x * 4.0f);
+    /*
     Serial.print(x);
     Serial.print(",");
     Serial.print(sShift);
     Serial.print(",");
     Serial.println(zShift);
-
+    */
     faceLeft.Copy(faceRight, 4);
 
     faceLeft.Scale(Vector3D(1.0f, 1.0f, -1.0f), Vector3D(0, 100, 0));
