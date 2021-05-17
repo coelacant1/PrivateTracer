@@ -1,4 +1,6 @@
 # **ProtoTracer: Protogen Ray-Tracing and Animation Engine**
+THIS IS THE WORKING PROJECT FOR NEW MODIFICATIONS, FOR THE READY PROJECT GO HERE: https://github.com/OpenProtogen/ProtoTracer
+
 This project is a 3D ray-tracing and animation engine for pixel matrices, designed to be used for drawing live animations on Protogen style characters from 3D object files (.OBJ).
 
 ## Demonstration:
