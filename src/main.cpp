@@ -47,7 +47,7 @@ BMP bootBMP = BMP(Vector2D(800, 3200), Vector2D(-200, -3200), bootImage, 2);
 BMP crashBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), crashImage, 0);
 BMP dedBMP = BMP(Vector2D(200, 200), Vector2D(20, 20), dedImage, 0);
 
-const uint8_t MaxBrightness = 80;
+const uint8_t MaxBrightness = 40;
 long screensaverTime = 0;
 
 Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &primaryPixelString, true, false, false);
@@ -87,13 +87,21 @@ void renderCameras(BMP* bmp, uint8_t brightnessLevel){
 
 void updateLEDS(){
   for (int i = 0; i < 306; i++) {
-    leds.setPixel(i + 306, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);
-    leds.setPixel(i + 612, camFronBot.GetPixels()[i].Color.R, camFronBot.GetPixels()[i].Color.G, camFronBot.GetPixels()[i].Color.B);
-    leds.setPixel(i + 918, camRearBot.GetPixels()[i].Color.R, camRearBot.GetPixels()[i].Color.G, camRearBot.GetPixels()[i].Color.B);
-    leds.setPixel(i + 1224, camFronTop.GetPixels()[i].Color.R, camFronTop.GetPixels()[i].Color.G, camFronTop.GetPixels()[i].Color.B);
+    /*
+    leds.setPixel(i + 306, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);//bottom front
+    leds.setPixel(i + 918, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);//top back
+    leds.setPixel(i + 1224, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);//90 front
+    leds.setPixel(i + 1530, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);//bottom back
+    leds.setPixel(i + 1836, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);//90 back
+    leds.setPixel(i + 2142, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);//top front
+    */
+    leds.setPixel(i + 918, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);
+    leds.setPixel(i + 306, camFronBot.GetPixels()[i].Color.R, camFronBot.GetPixels()[i].Color.G, camFronBot.GetPixels()[i].Color.B);
+    leds.setPixel(i + 1530, camRearBot.GetPixels()[i].Color.R, camRearBot.GetPixels()[i].Color.G, camRearBot.GetPixels()[i].Color.B);
+    leds.setPixel(i + 2142, camFronTop.GetPixels()[i].Color.R, camFronTop.GetPixels()[i].Color.G, camFronTop.GetPixels()[i].Color.B);
     
     if(i < 89){
-      leds.setPixel(i + 1530, camMiddBot.GetPixels()[i].Color.R, camMiddBot.GetPixels()[i].Color.G, camMiddBot.GetPixels()[i].Color.B);
+      leds.setPixel(i + 1224, camMiddBot.GetPixels()[i].Color.R, camMiddBot.GetPixels()[i].Color.G, camMiddBot.GetPixels()[i].Color.B);
       leds.setPixel(i + 1836, camMiddTop.GetPixels()[i].Color.R, camMiddTop.GetPixels()[i].Color.G, camMiddTop.GetPixels()[i].Color.B);
     }
   }
