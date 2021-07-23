@@ -55,8 +55,13 @@ Camera camRearTop = Camera(Vector3D(45, 0, 0),    Vector3D(90, 90, -500),    306
 Camera camFronBot = Camera(Vector3D(0, 0, 0),     Vector3D(-5, 0, -500),     306, &primaryPixelString, true, false, false);
 Camera camRearBot = Camera(Vector3D(0, 0, 180),   Vector3D(-20, -131, -500), 306, &primaryPixelString, false, false, false);
 
-Camera camMiddTop = Camera(Vector3D(45, 0, 0),   Vector3D(300, 0, -500), 89, &secondaryPixelString, true, false, false);
-Camera camMiddBot = Camera(Vector3D(-135, 0, 0),  Vector3D(-100, -90, -500), 89, &secondaryPixelString, true, false, false);
+//Right Face
+//Camera camMiddTop = Camera(Vector3D(45, 0, 0),   Vector3D(300, 0, -500), 89, &secondaryPixelString, true, false, false);
+//Camera camMiddBot = Camera(Vector3D(-135, 0, 0),  Vector3D(-100, -90, -500), 89, &secondaryPixelString, true, false, false);
+
+//Left Face
+Camera camMiddTop = Camera(Vector3D(45, 180, 0),   Vector3D(100, 190, -500), 89, &secondaryPixelString, true, false, false);
+Camera camMiddBot = Camera(Vector3D(-135, 180, 0),  Vector3D(0, -190, -500), 89, &secondaryPixelString, true, false, false);
 
 void printRenderTime(){
   Serial.print("in ");
