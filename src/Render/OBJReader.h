@@ -128,9 +128,9 @@ public:
         }
 
         for (int i = 0; i < *triangleLength; i++) {
-            triangleArray[i].p1 = &vertexArray[(int)triangleVecArray[i].X];
-            triangleArray[i].p2 = &vertexArray[(int)triangleVecArray[i].Y];
-            triangleArray[i].p3 = &vertexArray[(int)triangleVecArray[i].Z];
+            triangleArray[i].p1 = vertexArray[(int)triangleVecArray[i].X];
+            triangleArray[i].p2 = vertexArray[(int)triangleVecArray[i].Y];
+            triangleArray[i].p3 = vertexArray[(int)triangleVecArray[i].Z];
         }
     }
 };

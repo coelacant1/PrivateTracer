@@ -1,124 +1,143 @@
 #include <Arduino.h>
 #include <OctoWS2811.h>
 
-#include "Render/Camera.h"
-#include "Math/Rotation.h"
-#include "Filter/KalmanFilter.h"
-#include "Flash/CameraObjs.h"
-#include "Render/ObjectDeformer.h"
 #include "Animation/Boot.h"
-#include "Morph/Face.h"
-//#include "Sensors/MotionProcessor.h"
-#include "Materials/BMP.h"
-#include "Flash/BMPImages.h"
+#include "Filter/KalmanFilter.h"
 #include "Flash/CrashObjs.h"
 #include "Flash/MiscObjs.h"
-#include "Physics/PhysicsSimulator.h"
-
+#include "Render/Camera.h"
+#include "Math/Rotation.h"
 #include "Morph/ProtoDRMorphAnimator.h"
+#include "Render/ObjectDeformer.h"
 
-//MotionProcessor motionProcessor;
+#include "Flash/ProtoDR.h"
+#include "Flash/ProtoDRMini.h"
 
 const int ledsPerStrip = 306;
 DMAMEM int displayMemory[ledsPerStrip * 6];
 int drawingMemory[ledsPerStrip * 6];
 const int config = WS2811_GRB | WS2811_800kHz;
 OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
-long previousTime = micros();
 
 Boot boot;
 ProtoDRMorphAnimator protoMorph;
 
-BMP bootBMP = BMP(Vector2D(800, 3200), Vector2D(-200, -3200), bootImage, 2);
-BMP crashBMP = BMP(Vector2D(400, 300), Vector2D(-200, 0), crashImage, 0);
-BMP dedBMP = BMP(Vector2D(200, 200), Vector2D(20, 20), dedImage, 0);
-
 const uint8_t MaxBrightness = 40;
-long screensaverTime = 0;
+long previousTime = 0;
+/*
+Transform camFronTopTransform = Transform(Vector3D( -45,   0, 180), Vector3D(  90, -220, -500), Vector3D(-1, 1, 1));
+Transform camRearTopTransform = Transform(Vector3D(  45,   0,   0), Vector3D(  90,   90, -500), Vector3D( 1, 1, 1));
+Transform camFronBotTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  -5,    0, -500), Vector3D(-1, 1, 1));
+Transform camRearBotTransform = Transform(Vector3D( -45,   0, 180), Vector3D( -20, -131, -500), Vector3D( 1, 1, 1));*/
 
-Camera camFronTop = Camera(Vector3D(-45, 0, 180), Vector3D(90, -220, -500),  306, &primaryPixelString, true, false, false);
-Camera camRearTop = Camera(Vector3D(45, 0, 0),    Vector3D(90, 90, -500),    306, &primaryPixelString, false, false, false);
-Camera camFronBot = Camera(Vector3D(0, 0, 0),     Vector3D(-5, 0, -500),     306, &primaryPixelString, true, false, false);
-Camera camRearBot = Camera(Vector3D(0, 0, 180),   Vector3D(-20, -131, -500), 306, &primaryPixelString, false, false, false);
+Transform camFronTopTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  0, 0, -500), Vector3D( -1, 1, 1));
+Transform camRearTopTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  0, 0, -500), Vector3D(1, 1, 1));
+Transform camFronBotTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  0, 0, -500), Vector3D( -1, 1, 1));
+Transform camRearBotTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  0, 0, -500), Vector3D(1, 1, 1));
 
-//Right Face
-//Camera camMiddTop = Camera(Vector3D(45, 0, 0),   Vector3D(300, 0, -500), 89, &secondaryPixelString, true, false, false);
-//Camera camMiddBot = Camera(Vector3D(-135, 0, 0),  Vector3D(-100, -90, -500), 89, &secondaryPixelString, true, false, false);
+//Right
+Transform camRearMidTransform = Transform(Vector3D(  0, 0,   0), Vector3D( 0,  0, -500), Vector3D(-1, 1, 1));
+Transform camFronMidTransform = Transform(Vector3D(0, 0,   0), Vector3D( 0,  0, -500), Vector3D(-1, 1, 1));
 
-//Left Face
-Camera camMiddTop = Camera(Vector3D(45, 180, 0),   Vector3D(100, 190, -500), 89, &secondaryPixelString, true, false, false);
-Camera camMiddBot = Camera(Vector3D(-135, 180, 0),  Vector3D(0, -190, -500), 89, &secondaryPixelString, true, false, false);
+//Left
+//Transform camMiddTopTransform = Transform(Vector3D(  45, 180,   0), Vector3D(  -5,    0, -500), Vector3D(-1, 1, 1));
+//Transform camMiddBotTransform = Transform(Vector3D(-135, 180,   0), Vector3D( -20, -131, -500), Vector3D(-1, 1, 1));
+
+PixelGroup camFronTopPixels = PixelGroup(ProtoDR, 306);
+PixelGroup camRearTopPixels = PixelGroup(ProtoDR, 306);
+PixelGroup camFronBotPixels = PixelGroup(ProtoDR, 306);
+PixelGroup camRearBotPixels = PixelGroup(ProtoDR, 306);
+PixelGroup camRearMidPixels = PixelGroup(ProtoDRMini, 89);
+PixelGroup camFronMidPixels = PixelGroup(ProtoDRMini, 89);
+
+Camera camFronTop = Camera(&camFronTopTransform, &camFronTopPixels);
+Camera camRearTop = Camera(&camRearTopTransform, &camRearTopPixels);
+Camera camFronBot = Camera(&camFronBotTransform, &camFronBotPixels);
+Camera camRearBot = Camera(&camRearBotTransform, &camRearBotPixels);
+Camera camRearMid = Camera(&camRearMidTransform, &camRearMidPixels);
+Camera camFronMid = Camera(&camFronMidTransform, &camFronMidPixels);
 
 void printRenderTime(){
-  Serial.print("in ");
-  float dif = ((float)(micros() - previousTime)) / 1000000.0f;
-  Serial.print(dif, 5);
-  Serial.println("s.");
-  
-  previousTime = micros();
+    Serial.print("Rendered in ");
+    float dif = ((float)(micros() - previousTime)) / 1000000.0f;
+    Serial.print(dif, 5);
+    Serial.println("s.");
+    
+    previousTime = micros();
 }
 
 void renderCameras(Scene* scene){
-  camFronTop.Rasterize(scene, 1.0f, MaxBrightness);
-  camRearTop.Rasterize(scene, 1.0f, MaxBrightness);
-  camFronBot.Rasterize(scene, 1.0f, MaxBrightness);
-  camRearBot.Rasterize(scene, 1.0f, MaxBrightness);
-  camMiddTop.Rasterize(scene, 1.0f, MaxBrightness);
-  camMiddBot.Rasterize(scene, 1.0f, MaxBrightness);
-}
-
-void renderCameras(BMP* bmp, uint8_t brightnessLevel){
-  camFronTop.BMPRasterize(bmp, 1.0f, brightnessLevel);
-  camRearTop.BMPRasterize(bmp, 1.0f, brightnessLevel);
-  camFronBot.BMPRasterize(bmp, 1.0f, brightnessLevel);
-  camRearBot.BMPRasterize(bmp, 1.0f, brightnessLevel);
-  camMiddTop.BMPRasterize(bmp, 1.0f, brightnessLevel);
-  camMiddBot.BMPRasterize(bmp, 1.0f, brightnessLevel);
+    previousTime = micros();
+    camFronTop.Rasterize(scene);
+    camRearTop.Rasterize(scene);
+    camFronBot.Rasterize(scene);
+    camRearBot.Rasterize(scene);
+    camRearMid.Rasterize(scene);
+    camFronMid.Rasterize(scene);
+    printRenderTime();
 }
 
 void updateLEDS(){
-  for (int i = 0; i < 306; i++) {
-    leds.setPixel(i + 918, camRearTop.GetPixels()[i].Color.R, camRearTop.GetPixels()[i].Color.G, camRearTop.GetPixels()[i].Color.B);
-    leds.setPixel(i + 306, camFronBot.GetPixels()[i].Color.R, camFronBot.GetPixels()[i].Color.G, camFronBot.GetPixels()[i].Color.B);
-    leds.setPixel(i + 1530, camRearBot.GetPixels()[i].Color.R, camRearBot.GetPixels()[i].Color.G, camRearBot.GetPixels()[i].Color.B);
-    leds.setPixel(i + 2142, camFronTop.GetPixels()[i].Color.R, camFronTop.GetPixels()[i].Color.G, camFronTop.GetPixels()[i].Color.B);
-    
-    if(i < 89){
-      leds.setPixel(i + 1224, camMiddBot.GetPixels()[i].Color.R, camMiddBot.GetPixels()[i].Color.G, camMiddBot.GetPixels()[i].Color.B);
-      leds.setPixel(i + 1836, camMiddTop.GetPixels()[i].Color.R, camMiddTop.GetPixels()[i].Color.G, camMiddTop.GetPixels()[i].Color.B);
-    }
-  }
-  
-  leds.show();
-  printRenderTime();
-}
+    for (int i = 0; i < 306; i++) {
+        camFronTopPixels.GetPixel(i)->Color = camFronTopPixels.GetPixel(i)->Color.Scale(MaxBrightness);
+        camRearTopPixels.GetPixel(i)->Color = camRearTopPixels.GetPixel(i)->Color.Scale(MaxBrightness);
+        camFronBotPixels.GetPixel(i)->Color = camFronBotPixels.GetPixel(i)->Color.Scale(MaxBrightness);
+        camRearBotPixels.GetPixel(i)->Color = camRearBotPixels.GetPixel(i)->Color.Scale(MaxBrightness);
 
-void bootAnimation(){
-  for (float i = 0.0f; i < 1.0f; i += 1.0f / 1260.0f){
-    boot.Update(i);
-    boot.FadeIn(0.0125f);
+        //0 nothing
+        //306 front bottom
+        //612 mid panel front
+        //918 rear top panel
+        //1224 nothing
+        //1530 rear bottom panel
+        //1836 mid panel rear
+        //2142 front top panel
+
+
+        leds.setPixel(i + 2142,  camFronTopPixels.GetPixel(i)->Color.R, camFronTopPixels.GetPixel(i)->Color.G, camFronTopPixels.GetPixel(i)->Color.B);//918
+        leds.setPixel(i + 918,  camRearTopPixels.GetPixel(i)->Color.R, camRearTopPixels.GetPixel(i)->Color.G, camRearTopPixels.GetPixel(i)->Color.B);//306
+        leds.setPixel(i + 306, camFronBotPixels.GetPixel(i)->Color.R, camFronBotPixels.GetPixel(i)->Color.G, camFronBotPixels.GetPixel(i)->Color.B);//1530
+        leds.setPixel(i + 1530, camRearBotPixels.GetPixel(i)->Color.R, camRearBotPixels.GetPixel(i)->Color.G, camRearBotPixels.GetPixel(i)->Color.B);//2142
+        
+        if(i < 89){
+            camRearMidPixels.GetPixel(i)->Color = camRearMidPixels.GetPixel(i)->Color.Scale(MaxBrightness);
+            camFronMidPixels.GetPixel(i)->Color = camFronMidPixels.GetPixel(i)->Color.Scale(MaxBrightness);
+            
+            leds.setPixel(i + 1836, camRearMidPixels.GetPixel(i)->Color.R, camRearMidPixels.GetPixel(i)->Color.G, camRearMidPixels.GetPixel(i)->Color.B);//1224
+            leds.setPixel(i + 612, camFronMidPixels.GetPixel(i)->Color.R, camFronMidPixels.GetPixel(i)->Color.G, camFronMidPixels.GetPixel(i)->Color.B);//1836
+        }
+    }
     
-    renderCameras(boot.GetScene());
-    updateLEDS();
-  }
+    leds.show();
 }
 
 void setup() {
-  leds.begin();
-  leds.show();
+    leds.begin();
+    leds.show();
 
-  Serial.begin(115200);
-  Serial.println();
-  Serial.println("Starting...");
-  delay(50);
+    Serial.begin(115200);
+    Serial.println();
+    Serial.println("Starting...");
+    delay(250);
 
-  previousTime = micros();
-  screensaverTime = millis();
+    previousTime = micros();
+}
+
+void bootAnimation(){
+    for (float i = 0.0f; i < 1.0f; i += 1.0f / 1260.0f){
+        boot.Update(i);
+        boot.FadeIn(0.0125f);
+        
+        renderCameras(boot.GetScene());
+        updateLEDS();
+    }
 }
 
 void faceAnimation(){
     for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
         protoMorph.Update(i);
+
+        protoMorph.GetScene();
 
         renderCameras(protoMorph.GetScene());
 
@@ -126,38 +145,9 @@ void faceAnimation(){
     }
 }
 
-void deathAnimation(){
-    for (float i = 0; i < 1200; i += 1.2f) {
-        uint8_t glitchValue = (int)i % 20 > 16 ? (int)i / 4 : 0;
-        
-        if (i > 720){
-            renderCameras(&bootBMP, MaxBrightness);
-            bootBMP.ShiftPosition(Vector2D(0, 7));
-        }
-        else if (i > 180){
-            renderCameras(&dedBMP, MaxBrightness);
-        }
-        else{
-            renderCameras(&crashBMP, MaxBrightness);
-        }
-        
-        updateLEDS();
-        
-        bootBMP.Glitch(glitchValue);
-        dedBMP.Glitch(glitchValue);
-        crashBMP.Glitch(glitchValue);
-        
-        Serial.print(i);
-        Serial.print(" ");
-    }
-    
-    bootBMP.ResetShift();
-    crashBMP.ResetShift();
-}
-
 void loop() {
-  //bootAnimation();
-  faceAnimation();
-  //faceAnimation();
-  //deathAnimation();
+    //bootAnimation();
+    faceAnimation();
+    //faceAnimation();
+    //deathAnimation();
 }

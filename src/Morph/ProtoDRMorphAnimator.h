@@ -5,7 +5,7 @@
 #include "ProtoDRMorph.h"
 #include "..\Render\Scene.h"
 #include "..\Materials\GradientMaterial.h"
-#include "..\Math\SimplexNoise.h"
+#include "..\Materials\SimplexNoise.h"
 
 class ProtoDRMorphAnimator : public Animation{
 private:

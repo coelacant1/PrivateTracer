@@ -33,14 +33,6 @@ public:
 		return normal;
 	}
 
-	void Translate(Quaternion q, Vector3D p) {
-		*p1 = q.RotateVector(*p1) + p;
-		*p2 = q.RotateVector(*p2) + p;
-		*p3 = q.RotateVector(*p3) + p;
-
-		Normal();
-	}
-
 	bool DidIntersect(Vector3D ray, Vector3D direction, Vector3D* intersect, Vector3D* color) {
 		Vector3D pvec = direction.CrossProduct(edge2);
 		float det = edge1.DotProduct(pvec);
