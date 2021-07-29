@@ -1,6 +1,6 @@
 #pragma once
 
-Vector2D ProtoDR[306] = {
+Vector2D ProtoDRCamera[306] = {
 	 Vector2D(20.00f,5.00f),
 	 Vector2D(27.00f,5.00f),
 	 Vector2D(34.00f,5.00f),

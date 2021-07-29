@@ -5,6 +5,7 @@
 
 class Transform{
 private:
+    Quaternion baseRotation = Quaternion(1, 0, 0, 0);
     Quaternion rotation = Quaternion(1, 0, 0, 0);
     Vector3D position = Vector3D(0, 0, 0);
     Vector3D scale = Vector3D(1, 1, 1);
@@ -12,8 +13,8 @@ private:
 public:
     Transform(){}
 
-    Transform(Vector3D eulerXYZR, Vector3D position, Vector3D scale){
-        this->rotation = Rotation(EulerAngles(eulerXYZR, EulerConstants::EulerOrderXYZR)).GetQuaternion();;
+    Transform(Vector3D eulerXYZS, Vector3D position, Vector3D scale){
+        this->rotation = Rotation(EulerAngles(eulerXYZS, EulerConstants::EulerOrderXYZS)).GetQuaternion();
         this->position = position;
         this->scale = scale;
     }
@@ -24,16 +25,20 @@ public:
         this->scale = scale;
     }
 
+    void SetBaseRotation(Quaternion baseRotation){
+        this->baseRotation = baseRotation;
+    }
+
     void SetRotation(Quaternion rotation){
         this->rotation = rotation;
     }
 
-    void SetRotation(Vector3D eulerXYZR){
-        this->rotation = Rotation(EulerAngles(eulerXYZR, EulerConstants::EulerOrderXYZR)).GetQuaternion();
+    void SetRotation(Vector3D eulerXYZS){
+        this->rotation = Rotation(EulerAngles(eulerXYZS, EulerConstants::EulerOrderXYZS)).GetQuaternion();
     }
 
     Quaternion GetRotation(){
-        return rotation;
+        return rotation * baseRotation;
     }
 
     void SetPosition(Vector3D position){
@@ -52,8 +57,8 @@ public:
         return scale;
     }
 
-    void Rotate(Vector3D eulerXYZR){
-        this->rotation = this->rotation * Rotation(EulerAngles(eulerXYZR, EulerConstants::EulerOrderXYZR)).GetQuaternion();
+    void Rotate(Vector3D eulerXYZS){
+        this->rotation = this->rotation * Rotation(EulerAngles(eulerXYZS, EulerConstants::EulerOrderXYZS)).GetQuaternion();
     }
 
     void Rotate(Quaternion rotation){

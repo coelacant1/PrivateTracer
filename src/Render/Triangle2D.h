@@ -23,6 +23,8 @@ public:
     Vector3D* t3e2;
     Vector3D* t3e1;
 
+    bool behindCamera = false;
+
 	Triangle2D(){}
 
 	Triangle2D(Vector2D p1, Vector2D p2, Vector2D p3) {
@@ -36,12 +38,20 @@ public:
         denominator = 1.0f / (v0.X * v1.Y - v1.X * v0.Y);
 	}
 
-	Triangle2D(Transform* camT, Triangle3D* t, Material* material) {
+	Triangle2D(Quaternion lookDirection, Transform* camT, Triangle3D* t, Material* material) {
         this->material = material;
 
-		this->p1 = Vector2D((camT->GetRotation().UnrotateVector(*t->p1) + camT->GetPosition()) * camT->GetScale());
-		this->p2 = Vector2D((camT->GetRotation().UnrotateVector(*t->p2) + camT->GetPosition()) * camT->GetScale());
-		this->p3 = Vector2D((camT->GetRotation().UnrotateVector(*t->p3) + camT->GetPosition()) * camT->GetScale());
+        Vector3D p1Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p1 - camT->GetPosition());
+        Vector3D p2Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p2 - camT->GetPosition());
+        Vector3D p3Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p3 - camT->GetPosition());
+
+        if(p1Normalized.Z <= 0 && p2Normalized.Z <= 0 && p3Normalized.Z <= 0){
+            behindCamera = true;
+        }
+
+		this->p1 = Vector2D(p1Normalized);
+		this->p2 = Vector2D(p2Normalized);
+		this->p3 = Vector2D(p3Normalized);
 
 		normal = t->Normal();
 

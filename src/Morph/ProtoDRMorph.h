@@ -160,8 +160,8 @@ private:
         Morph(6, AngryEyeBrowIndexes, AngryEyeBrowVectors)
     };
 
-    Quaternion offsetRotation = Rotation(EulerAngles(Vector3D(0.0f,0.0f,0.0f), EulerConstants::EulerOrderXYZR)).GetQuaternion();
-    Vector3D offsetPosition = Vector3D(0.0f,0.0f,0.0f);
+    Quaternion offsetRotation = Rotation(EulerAngles(Vector3D(0.0000f,0.0000f,0.0000f), EulerConstants::EulerOrderXYZS)).GetQuaternion();
+    Vector3D offsetPosition = Vector3D(0.0000f,0.0000f,0.0000f);
 
 public:
     ProtoDR(){}
@@ -173,7 +173,7 @@ public:
     void SetMorphWeight(Morphs morph, float weight){
         morphs[morph].Weight = weight;
     }
-    
+
     float* GetMorphWeightReference(Morphs morph){
         return &morphs[morph].Weight;
     }

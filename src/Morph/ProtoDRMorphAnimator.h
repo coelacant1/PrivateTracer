@@ -214,9 +214,6 @@ public:
 
         pM.Update();
 
-
-        //pM.Reset();
-
         Object3D* obj = pM.GetObject();
         
         float x = sinf(ratio * 3.14159f / 180.0f * 360.0f * 2.0f) * 3.0f;
@@ -230,8 +227,10 @@ public:
         sNoise.SetScale(Vector3D(sShift, sShift, sShift));
         sNoise.SetZPosition(x * 4.0f);
         
-        //obj->Rotate(Vector3D(0, -x * 0.25f, 0), Vector3D(0, 0, 0));
-        obj->MoveRelative(Vector3D(x - 5.0f, y + 10.0f, 600.0f));
+        obj->Rotate(Vector3D(ratio * 360.0f, 0.0f, 0), Vector3D(0, 0, 0));
+        obj->Rotate(Vector3D(0, 180.0f, 0), Vector3D(0, 0, 0));
+        obj->MoveRelative(Vector3D(x, y, 600.0f));
+        //obj->MoveRelative(Vector3D(0.0f, 0.0f, ratio * 10000.0f));
         //obj->MoveRelative(Vector3D(-5.0f, 10.0f, 600.0f));
         obj->ScaleCenter(Vector3D(1.0f, 1.0f, 1.0f));
     }

@@ -55,12 +55,6 @@ public:
     }
 
     bool ContainsVector2D(Vector2D v){
-        Serial.print(v.ToString());
-        Serial.print("\t");
-        Serial.print(bounds.GetMinimum().ToString());
-        Serial.print("\t");
-        Serial.println(bounds.GetMaximum().ToString());
-
         return v.CheckBounds(bounds.GetMinimum(), bounds.GetMaximum());
     }
 };

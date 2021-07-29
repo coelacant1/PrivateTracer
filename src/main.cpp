@@ -24,38 +24,35 @@ ProtoDRMorphAnimator protoMorph;
 
 const uint8_t MaxBrightness = 40;
 long previousTime = 0;
-/*
-Transform camFronTopTransform = Transform(Vector3D( -45,   0, 180), Vector3D(  90, -220, -500), Vector3D(-1, 1, 1));
-Transform camRearTopTransform = Transform(Vector3D(  45,   0,   0), Vector3D(  90,   90, -500), Vector3D( 1, 1, 1));
-Transform camFronBotTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  -5,    0, -500), Vector3D(-1, 1, 1));
-Transform camRearBotTransform = Transform(Vector3D( -45,   0, 180), Vector3D( -20, -131, -500), Vector3D( 1, 1, 1));*/
 
-Transform camFronTopTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  0, 0, -500), Vector3D( -1, 1, 1));
-Transform camRearTopTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  0, 0, -500), Vector3D(1, 1, 1));
-Transform camFronBotTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  0, 0, -500), Vector3D( -1, 1, 1));
-Transform camRearBotTransform = Transform(Vector3D(   0,   0,   0), Vector3D(  0, 0, -500), Vector3D(1, 1, 1));
+CameraLayout cameraLayout = CameraLayout(CameraLayout::ZForward, CameraLayout::YUp);
+
+Transform camFronTopTransform = Transform(Vector3D(   35.25f, -2.25f, 216.5f), Vector3D(  68.25f, 210.75f, 31.0f), Vector3D(-1, 1, 1));
+Transform camRearTopTransform = Transform(Vector3D(   -36.5f, 14.0f, 45.0f), Vector3D(  15.5f,   117.5f,   -43.5f), Vector3D(-1, 1, 1));
+Transform camFronBotTransform = Transform(Vector3D(   20.25f,   7.0f,   1.0f), Vector3D(  0, 0, 0), Vector3D( 1, 1, 1));
+Transform camRearBotTransform = Transform(Vector3D(   -20.75f,   -16.5f,   177.5f), Vector3D(  17, 122, -42), Vector3D( 1, 1, 1));
 
 //Right
-Transform camRearMidTransform = Transform(Vector3D(  0, 0,   0), Vector3D( 0,  0, -500), Vector3D(-1, 1, 1));
-Transform camFronMidTransform = Transform(Vector3D(0, 0,   0), Vector3D( 0,  0, -500), Vector3D(-1, 1, 1));
+Transform camRearMidTransform = Transform(Vector3D(  16.5f, 5.0f, 42.5f), Vector3D(-127.0f, 187.0f, -93.5f), Vector3D(1, 1, 1));
+Transform camFronMidTransform = Transform(Vector3D(  16.5f, 5.0f, 222.5f), Vector3D( -57.5f, 119.5f, -66.5f), Vector3D(1, 1, 1));
 
 //Left
 //Transform camMiddTopTransform = Transform(Vector3D(  45, 180,   0), Vector3D(  -5,    0, -500), Vector3D(-1, 1, 1));
 //Transform camMiddBotTransform = Transform(Vector3D(-135, 180,   0), Vector3D( -20, -131, -500), Vector3D(-1, 1, 1));
 
-PixelGroup camFronTopPixels = PixelGroup(ProtoDR, 306);
-PixelGroup camRearTopPixels = PixelGroup(ProtoDR, 306);
-PixelGroup camFronBotPixels = PixelGroup(ProtoDR, 306);
-PixelGroup camRearBotPixels = PixelGroup(ProtoDR, 306);
+PixelGroup camFronTopPixels = PixelGroup(ProtoDRCamera, 306);
+PixelGroup camRearTopPixels = PixelGroup(ProtoDRCamera, 306);
+PixelGroup camFronBotPixels = PixelGroup(ProtoDRCamera, 306);
+PixelGroup camRearBotPixels = PixelGroup(ProtoDRCamera, 306);
 PixelGroup camRearMidPixels = PixelGroup(ProtoDRMini, 89);
 PixelGroup camFronMidPixels = PixelGroup(ProtoDRMini, 89);
 
-Camera camFronTop = Camera(&camFronTopTransform, &camFronTopPixels);
-Camera camRearTop = Camera(&camRearTopTransform, &camRearTopPixels);
-Camera camFronBot = Camera(&camFronBotTransform, &camFronBotPixels);
-Camera camRearBot = Camera(&camRearBotTransform, &camRearBotPixels);
-Camera camRearMid = Camera(&camRearMidTransform, &camRearMidPixels);
-Camera camFronMid = Camera(&camFronMidTransform, &camFronMidPixels);
+Camera camFronTop = Camera(&camFronTopTransform, &cameraLayout, &camFronTopPixels);
+Camera camRearTop = Camera(&camRearTopTransform, &cameraLayout, &camRearTopPixels);
+Camera camFronBot = Camera(&camFronBotTransform, &cameraLayout, &camFronBotPixels);
+Camera camRearBot = Camera(&camRearBotTransform, &cameraLayout, &camRearBotPixels);
+Camera camRearMid = Camera(&camRearMidTransform, &cameraLayout, &camRearMidPixels);
+Camera camFronMid = Camera(&camFronMidTransform, &cameraLayout, &camFronMidPixels);
 
 void printRenderTime(){
     Serial.print("Rendered in ");
@@ -84,27 +81,17 @@ void updateLEDS(){
         camFronBotPixels.GetPixel(i)->Color = camFronBotPixels.GetPixel(i)->Color.Scale(MaxBrightness);
         camRearBotPixels.GetPixel(i)->Color = camRearBotPixels.GetPixel(i)->Color.Scale(MaxBrightness);
 
-        //0 nothing
-        //306 front bottom
-        //612 mid panel front
-        //918 rear top panel
-        //1224 nothing
-        //1530 rear bottom panel
-        //1836 mid panel rear
-        //2142 front top panel
-
-
         leds.setPixel(i + 2142,  camFronTopPixels.GetPixel(i)->Color.R, camFronTopPixels.GetPixel(i)->Color.G, camFronTopPixels.GetPixel(i)->Color.B);//918
-        leds.setPixel(i + 918,  camRearTopPixels.GetPixel(i)->Color.R, camRearTopPixels.GetPixel(i)->Color.G, camRearTopPixels.GetPixel(i)->Color.B);//306
-        leds.setPixel(i + 306, camFronBotPixels.GetPixel(i)->Color.R, camFronBotPixels.GetPixel(i)->Color.G, camFronBotPixels.GetPixel(i)->Color.B);//1530
-        leds.setPixel(i + 1530, camRearBotPixels.GetPixel(i)->Color.R, camRearBotPixels.GetPixel(i)->Color.G, camRearBotPixels.GetPixel(i)->Color.B);//2142
+        leds.setPixel(i + 918,   camRearTopPixels.GetPixel(i)->Color.R, camRearTopPixels.GetPixel(i)->Color.G, camRearTopPixels.GetPixel(i)->Color.B);//306
+        leds.setPixel(i + 306,   camFronBotPixels.GetPixel(i)->Color.R, camFronBotPixels.GetPixel(i)->Color.G, camFronBotPixels.GetPixel(i)->Color.B);//1530
+        leds.setPixel(i + 1530,  camRearBotPixels.GetPixel(i)->Color.R, camRearBotPixels.GetPixel(i)->Color.G, camRearBotPixels.GetPixel(i)->Color.B);//2142
         
         if(i < 89){
             camRearMidPixels.GetPixel(i)->Color = camRearMidPixels.GetPixel(i)->Color.Scale(MaxBrightness);
             camFronMidPixels.GetPixel(i)->Color = camFronMidPixels.GetPixel(i)->Color.Scale(MaxBrightness);
             
             leds.setPixel(i + 1836, camRearMidPixels.GetPixel(i)->Color.R, camRearMidPixels.GetPixel(i)->Color.G, camRearMidPixels.GetPixel(i)->Color.B);//1224
-            leds.setPixel(i + 612, camFronMidPixels.GetPixel(i)->Color.R, camFronMidPixels.GetPixel(i)->Color.G, camFronMidPixels.GetPixel(i)->Color.B);//1836
+            leds.setPixel(i + 612,  camFronMidPixels.GetPixel(i)->Color.R, camFronMidPixels.GetPixel(i)->Color.G, camFronMidPixels.GetPixel(i)->Color.B);//1836
         }
     }
     
@@ -138,6 +125,11 @@ void faceAnimation(){
         protoMorph.Update(i);
 
         protoMorph.GetScene();
+
+        //Vector3D rotate = Vector3D(0, 0, 45);
+
+        //camFronBotTransform.Rotate(rotate);
+        //camRearBotTransform.Rotate(rotate);
 
         renderCameras(protoMorph.GetScene());
 

@@ -48,7 +48,7 @@ Vector2D Quaternion::UnrotateVector(Vector2D coordinate) {
 Vector3D Quaternion::RotateVector(Vector3D coordinate) {
 	Quaternion current = Quaternion(this->W, this->X, this->Y, this->Z);
 	Quaternion qv = Quaternion(0, coordinate.X, coordinate.Y, coordinate.Z);
-	Quaternion qr = current * qv * current.MultiplicativeInverse();
+	Quaternion qr = current * qv * current.Conjugate();
 
 	return Vector3D {
 		qr.X,
@@ -60,7 +60,7 @@ Vector3D Quaternion::RotateVector(Vector3D coordinate) {
 Vector3D Quaternion::UnrotateVector(Vector3D coordinate) {
 	Quaternion current = Quaternion(this->W, this->X, this->Y, this->Z);
 
-	return current.Conjugate().RotateVector(coordinate);
+	return current.UnitQuaternion().Conjugate().RotateVector(coordinate);
 }
 
 Vector3D Quaternion::GetBiVector() {
@@ -143,8 +143,7 @@ Quaternion Quaternion::Subtract(Quaternion quaternion) {
 Quaternion Quaternion::Multiply(Quaternion quaternion) {
 	Quaternion current = Quaternion(this->W, this->X, this->Y, this->Z);
 	
-	return Quaternion
-	{
+	return Quaternion{
 		current.W * quaternion.W - current.X * quaternion.X - current.Y * quaternion.Y - current.Z * quaternion.Z,
 		current.W * quaternion.X + current.X * quaternion.W + current.Y * quaternion.Z - current.Z * quaternion.Y,
 		current.W * quaternion.Y - current.X * quaternion.Z + current.Y * quaternion.W + current.Z * quaternion.X,
@@ -296,6 +295,7 @@ Quaternion Quaternion::UnitQuaternion() {
 }
 
 float Quaternion::Magnitude() {
+	//VERIFY
 	return sqrtf(Normal());
 }
 
@@ -307,7 +307,7 @@ float Quaternion::Normal() {
 	Quaternion current = Quaternion(this->W, this->X, this->Y, this->Z);
 
 
-	return powf(current.W, 2.0f) + powf(current.X, 2.0f) + powf(current.Y, 2.0f) + powf(current.Z, 2.0f);
+	return powf(powf(current.W, 2.0f) + powf(current.X, 2.0f) + powf(current.Y, 2.0f) + powf(current.Z, 2.0f), 0.5f);
 }
 
 bool Quaternion::IsNaN() {
