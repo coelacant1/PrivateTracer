@@ -33,8 +33,10 @@ Transform camFronBotTransform = Transform(Vector3D(   20.25f,   7.0f,   1.0f), V
 Transform camRearBotTransform = Transform(Vector3D(   -20.75f,   -16.5f,   177.5f), Vector3D(  17, 122, -42), Vector3D( 1, 1, 1));
 
 //Right
-Transform camRearMidTransform = Transform(Vector3D(  16.5f, 5.0f, 42.5f), Vector3D(-127.0f, 187.0f, -93.5f), Vector3D(1, 1, 1));
-Transform camFronMidTransform = Transform(Vector3D(  16.5f, 5.0f, 222.5f), Vector3D( -57.5f, 119.5f, -66.5f), Vector3D(1, 1, 1));
+//Transform camRearMidTransform = Transform(Vector3D(  16.5f, 5.0f, 42.5f), Vector3D(-127.0f, 187.0f, -93.5f), Vector3D(1, 1, 1));
+//Transform camFronMidTransform = Transform(Vector3D(  16.5f, 5.0f, 222.5f), Vector3D( -57.5f, 119.5f, -66.5f), Vector3D(1, 1, 1));
+Transform camRearMidTransform = Transform(Vector3D(-7.5f, 15.5f, 44.5f), Vector3D(-195.0f, 184.0f, -113.0f), Vector3D(1, 1, 1));
+Transform camFronMidTransform = Transform(Vector3D(7.5f, -15.5f, -135.5f), Vector3D(10.5f, 122.5f, -46.5f), Vector3D(1, 1, 1));
 
 //Left
 //Transform camMiddTopTransform = Transform(Vector3D(  45, 180,   0), Vector3D(  -5,    0, -500), Vector3D(-1, 1, 1));

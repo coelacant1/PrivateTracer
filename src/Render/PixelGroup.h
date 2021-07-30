@@ -54,7 +54,9 @@ public:
         return pixelCount;
     }
 
-    bool ContainsVector2D(Vector2D v){
+    bool ContainsVector2D(Transform *t, Vector2D v){
+        //rotate and move bounding box to transform 
+
         return v.CheckBounds(bounds.GetMinimum(), bounds.GetMaximum());
     }
 };

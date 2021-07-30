@@ -23,7 +23,7 @@ public:
     Vector3D* t3e2;
     Vector3D* t3e1;
 
-    bool behindCamera = false;
+    float averageDepth = 0.0f;
 
 	Triangle2D(){}
 
@@ -45,9 +45,7 @@ public:
         Vector3D p2Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p2 - camT->GetPosition());
         Vector3D p3Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p3 - camT->GetPosition());
 
-        if(p1Normalized.Z <= 0 && p2Normalized.Z <= 0 && p3Normalized.Z <= 0){
-            behindCamera = true;
-        }
+        averageDepth = (p1Normalized.Z + p2Normalized.Z + p3Normalized.Z) / 3.0f;
 
 		this->p1 = Vector2D(p1Normalized);
 		this->p2 = Vector2D(p2Normalized);

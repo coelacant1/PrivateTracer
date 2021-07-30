@@ -14,7 +14,7 @@ public:
     Transform(){}
 
     Transform(Vector3D eulerXYZS, Vector3D position, Vector3D scale){
-        this->rotation = Rotation(EulerAngles(eulerXYZS, EulerConstants::EulerOrderXYZS)).GetQuaternion();
+        this->rotation = Rotation(EulerAngles(eulerXYZS, EulerConstants::EulerOrderXZYS)).GetQuaternion();
         this->position = position;
         this->scale = scale;
     }

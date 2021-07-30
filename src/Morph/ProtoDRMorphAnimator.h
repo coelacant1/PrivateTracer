@@ -229,7 +229,7 @@ public:
         
         obj->Rotate(Vector3D(ratio * 360.0f, 0.0f, 0), Vector3D(0, 0, 0));
         obj->Rotate(Vector3D(0, 180.0f, 0), Vector3D(0, 0, 0));
-        obj->MoveRelative(Vector3D(x, y, 600.0f));
+        //obj->MoveRelative(Vector3D(x, y, 600.0f));
         //obj->MoveRelative(Vector3D(0.0f, 0.0f, ratio * 10000.0f));
         //obj->MoveRelative(Vector3D(-5.0f, 10.0f, 600.0f));
         obj->ScaleCenter(Vector3D(1.0f, 1.0f, 1.0f));
