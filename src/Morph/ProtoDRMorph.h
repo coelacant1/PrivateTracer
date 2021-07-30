@@ -182,6 +182,9 @@ public:
         for(int i = 0; i < morphCount; i++){
             morphs[i].Weight = 0.0f;
         }
+
+        SetMorphWeight(ProtoDR::HideBlush, 1.0f);
+        SetMorphWeight(ProtoDR::HideSecondEye, 1.0f);
     }
 
     void Update(){

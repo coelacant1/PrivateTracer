@@ -164,34 +164,60 @@ public:
         mouth.Update();
     }
 
-    void Circle(){
+    void Default(){
+        pM.Reset();
+        blink.Play();
+        mouth.Play();
+
+    }
+
+    void OwO(){
         pM.Reset();
         blink.Pause();
         blink.Reset();
+        mouth.Pause();
+        mouth.Reset();
 
+        pM.SetMorphWeight(ProtoDR::BlushEye, 1.0f);
+        pM.SetMorphWeight(ProtoDR::HideBlush, 0.0f);
+        pM.SetMorphWeight(ProtoDR::HideEyeBrow, 1.0f);
+        pM.SetMorphWeight(ProtoDR::OwOMouth, 1.0f);
     }
 
     void Sad(){
         pM.Reset();
         blink.Play();
+        mouth.Pause();
+        mouth.Reset();
 
-
+        pM.SetMorphWeight(ProtoDR::SadEye, 1.0f);
+        pM.SetMorphWeight(ProtoDR::SadEyeBrow, 1.0f);
+        pM.SetMorphWeight(ProtoDR::SadMouth, 1.0f);
     }
 
     void Dead(){
         pM.Reset();
         blink.Pause();
         blink.Reset();
+        mouth.Pause();
+        mouth.Reset();
 
-
+        pM.SetMorphWeight(ProtoDR::FlatMouth, 1.0f);
+        pM.SetMorphWeight(ProtoDR::DeadEye, 1.0f);
+        pM.SetMorphWeight(ProtoDR::HideEyeBrow, 1.0f);
     }
 
     void Heart(){
         pM.Reset();
         blink.Pause();
         blink.Reset();
+        mouth.Pause();
+        mouth.Reset();
 
-
+        pM.SetMorphWeight(ProtoDR::HeartEye, 1.0f);
+        pM.SetMorphWeight(ProtoDR::HideBlush, 0.0f);
+        pM.SetMorphWeight(ProtoDR::HideEyeBrow, 1.0f);
+        pM.SetMorphWeight(ProtoDR::OwOMouth, 1.0f);
     }
 
     void FadeIn(float stepRatio){
@@ -214,6 +240,12 @@ public:
 
         pM.Update();
 
+        if (ratio > 0.8f) OwO();
+        else if (ratio > 0.6f) Sad();
+        else if (ratio > 0.4f) Dead();
+        else if (ratio > 0.2f) Heart();
+        else Default();
+
         Object3D* obj = pM.GetObject();
         
         float x = sinf(ratio * 3.14159f / 180.0f * 360.0f * 2.0f) * 3.0f;
@@ -227,9 +259,9 @@ public:
         sNoise.SetScale(Vector3D(sShift, sShift, sShift));
         sNoise.SetZPosition(x * 4.0f);
         
-        obj->Rotate(Vector3D(ratio * 360.0f, 0.0f, 0), Vector3D(0, 0, 0));
+        //obj->Rotate(Vector3D(ratio * 360.0f, 0.0f, 0), Vector3D(0, 0, 0));
         obj->Rotate(Vector3D(0, 180.0f, 0), Vector3D(0, 0, 0));
-        //obj->MoveRelative(Vector3D(x, y, 600.0f));
+        obj->MoveRelative(Vector3D(x, y, 600.0f));
         //obj->MoveRelative(Vector3D(0.0f, 0.0f, ratio * 10000.0f));
         //obj->MoveRelative(Vector3D(-5.0f, 10.0f, 600.0f));
         obj->ScaleCenter(Vector3D(1.0f, 1.0f, 1.0f));

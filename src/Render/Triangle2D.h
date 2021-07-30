@@ -41,7 +41,7 @@ public:
 	Triangle2D(Quaternion lookDirection, Transform* camT, Triangle3D* t, Material* material) {
         this->material = material;
 
-        Vector3D p1Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p1 - camT->GetPosition());
+        Vector3D p1Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p1 - camT->GetPosition());// * transform->GetScale()
         Vector3D p2Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p2 - camT->GetPosition());
         Vector3D p3Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p3 - camT->GetPosition());
 

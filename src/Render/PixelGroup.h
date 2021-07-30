@@ -55,7 +55,15 @@ public:
     }
 
     bool ContainsVector2D(Transform *t, Vector2D v){
-        //rotate and move bounding box to transform 
+        /*
+        //rotate and move bounding box to transform
+         Serial.print(v.ToString());
+         Serial.print("\t");
+         Serial.print(bounds.GetMinimum().ToString());
+         Serial.print("\t");
+         Serial.println(bounds.GetMaximum().ToString());
+         delay(50);
+        */
 
         return v.CheckBounds(bounds.GetMinimum(), bounds.GetMaximum());
     }

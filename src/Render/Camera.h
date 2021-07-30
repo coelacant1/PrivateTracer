@@ -91,11 +91,11 @@ public:
                 for (int j = 0; j < scene->objects[i]->GetTriangleAmount(); j++) {
                     triangles[triangleCounter] = new Triangle2D(lookDirection, transform, &scene->objects[i]->GetTriangles()[j], scene->objects[i]->GetMaterial());
                     
-                    bool triangleInView = pixelGroup->ContainsVector2D(transform, triangles[triangleCounter]->p1) ||
-                                          pixelGroup->ContainsVector2D(transform, triangles[triangleCounter]->p2) ||
-                                          pixelGroup->ContainsVector2D(transform, triangles[triangleCounter]->p3);
+                    bool triangleInView = pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p1) * transform->GetScale()) ||
+                                          pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p2) * transform->GetScale()) ||
+                                          pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p3) * transform->GetScale());
 
-                    triangleInView = 1;// = (triangleInView && !triangles[triangleCounter]->behindCamera);//culling behind camera
+                    triangleInView = (triangleInView && triangles[triangleCounter]->averageDepth > 0);//culling behind camera
                     
                     if(triangleInView) triangleCounter++;
                     else delete triangles[triangleCounter];//out of view space remove from array
