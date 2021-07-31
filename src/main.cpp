@@ -33,12 +33,12 @@ Transform camFronBotTransform = Transform(Vector3D(   20.25f,   7.0f,   1.0f), V
 Transform camRearBotTransform = Transform(Vector3D(   -20.75f,   -16.5f,   177.5f), Vector3D(  17, 122, -42), Vector3D( 1, 1, 1));
 
 //Right
-//Transform camRearMidTransform = Transform(Vector3D(-7.5f, 15.5f, 44.5f), Vector3D(-195.0f, 184.0f, -113.0f), Vector3D(1, 1, 1));
-//Transform camFronMidTransform = Transform(Vector3D(7.5f, -15.5f, -135.5f), Vector3D(10.5f, 122.5f, -46.5f), Vector3D(1, 1, 1));
+Transform camRearMidTransform = Transform(Vector3D(-7.5f, 15.5f, 44.5f), Vector3D(-195.0f, 184.0f, -113.0f), Vector3D(1, 1, 1));
+Transform camFronMidTransform = Transform(Vector3D(7.5f, -15.5f, -135.5f), Vector3D(10.5f, 122.5f, -46.5f), Vector3D(1, 1, 1));
 
 //Left
-Transform camRearMidTransform = Transform(Vector3D(13.5f, -189.0f, 312.5f), Vector3D(-59.0f, 191.0f, 175.0f), Vector3D(1, 1, 1));
-Transform camFronMidTransform = Transform(Vector3D(-13.5f, 171.0f, 132.5f), Vector3D(-126.0f, 117.5f, 191.0f), Vector3D(1, 1, 1));
+//Transform camRearMidTransform = Transform(Vector3D(13.5f, -189.0f, 312.5f), Vector3D(-59.0f, 191.0f, 175.0f), Vector3D(1, 1, 1));
+//Transform camFronMidTransform = Transform(Vector3D(-13.5f, 171.0f, 132.5f), Vector3D(-126.0f, 117.5f, 191.0f), Vector3D(1, 1, 1));
 
 PixelGroup camFronTopPixels = PixelGroup(ProtoDRCamera, 306);
 PixelGroup camRearTopPixels = PixelGroup(ProtoDRCamera, 306);

@@ -37,7 +37,7 @@ private:
         }
 
         if(didIntersect){
-            Vector3D rotateRay = transform->GetRotation().RotateVector(Vector3D(pixelRay.X, pixelRay.Y, 0).Multiply(transform->GetScale()).Add(transform->GetPosition()));
+            Vector3D rotateRay = transform->GetRotation().Multiply(lookDirection).UnrotateVector(Vector3D(pixelRay.X, pixelRay.Y, 0) - transform->GetPosition());
             
             color = triangles[triangle]->GetMaterial()->GetRGB(rotateRay, triangles[triangle]->normal);
         }
