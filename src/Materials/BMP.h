@@ -21,7 +21,6 @@ private:
 public:
     BMP(Vector2D imageSize, Vector2D offsetPosition, const uint8_t* bmpArray, uint8_t padding) : file(bmpArray){
         //this->file = bmpArray;
-        Serial.println("READING BMP FILE");
         this->imageSize = imageSize;
         this->offsetPosition = offsetPosition;
         this->padding = padding;

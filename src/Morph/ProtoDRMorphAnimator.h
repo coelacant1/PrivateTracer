@@ -215,7 +215,6 @@ public:
         mouth.Reset();
 
         pM.SetMorphWeight(ProtoDR::HeartEye, 1.0f);
-        pM.SetMorphWeight(ProtoDR::HideBlush, 0.0f);
         pM.SetMorphWeight(ProtoDR::HideEyeBrow, 1.0f);
         pM.SetMorphWeight(ProtoDR::OwOMouth, 1.0f);
     }
@@ -235,40 +234,29 @@ public:
     void Update(float ratio){
         UpdateKeyFrameTracks();
 
-        pM.Reset();
-
-        pM.SetMorphWeight(ProtoDR::HideBlush, 0.0f);
-        pM.SetMorphWeight(ProtoDR::HideSecondEye, 0.0f);
-
-        if (ratio < 0.5f){
-            pM.SetMorphWeight(ProtoDR::OwO, ratio * 2.0f);
-        }
-        else{
-            pM.SetMorphWeight(ProtoDR::OwO, 1.0f);
-            }
-        
+        if (ratio > 0.8f) OwO();
+        else if (ratio > 0.6f) Sad();
+        else if (ratio > 0.4f) Dead();
+        else if (ratio > 0.2f) Heart();
+        else Default();
         pM.Update();
-
-
-        Object3D* obj = pM.GetObject();
         
         float x = sinf(ratio * 3.14159f / 180.0f * 360.0f * 2.0f) * 3.0f;
         float y = cosf(ratio * 3.14159f / 180.0f * 360.0f * 4.0f) * 3.0f;
         
         float linSweep = ratio > 0.5f ? 1.0f - ratio : ratio;
-        float sShift = 1.0f * 0.0025f;// + 0.005f;
+        float sShift = linSweep * 0.002f + 0.005f;
 
-        //gNoiseMat.SetGradientPeriod(0.5f + linSweep * 4.0f);
+        gNoiseMat.SetGradientPeriod(0.5f + linSweep * 2.0f);
         gNoiseMat.HueShift(ratio * 360 * 2);
         sNoise.SetScale(Vector3D(sShift, sShift, sShift));
         sNoise.SetZPosition(x * 4.0f);
         
-        //obj->Rotate(Vector3D(ratio * 360.0f, 0.0f, 0), Vector3D(0, 0, 0));
-        //obj->Rotate(Vector3D(0, 180.0f, 0), Vector3D(0, 0, 0));
-        obj->MoveRelative(Vector3D(x, y, 600.0f));
-        //obj->MoveRelative(Vector3D(0.0f, 0.0f, ratio * 10000.0f));
-        //obj->MoveRelative(Vector3D(-5.0f, 10.0f, 600.0f));
-        obj->ScaleCenter(Vector3D(1.0f, 1.0f, 1.0f));
+        pM.GetObject()->GetTransform()->SetRotation(Vector3D(0, 180.0f, 0));
+        pM.GetObject()->GetTransform()->SetPosition(Vector3D(x, y, 600.0f));
+        pM.GetObject()->GetTransform()->Scale(Vector3D(1.0f, 1.0f, 1.0f));
+
+        pM.GetObject()->UpdateTransform();
     }
 
 };

@@ -73,7 +73,7 @@ public:
         //for each object in the scene, get the triangles
         for(int i = 0; i < scene->numObjects; i++){
             if(scene->objects[i]->IsEnabled()){
-                numTriangles += scene->objects[i]->GetTriangleAmount();
+                numTriangles += scene->objects[i]->GetTriangleGroup()->GetTriangleCount();
             }
         }
         
@@ -88,14 +88,16 @@ public:
         for(int i = 0; i < scene->numObjects; i++){
             if(scene->objects[i]->IsEnabled()){
                 //for each triangle in object, project onto 2d surface, but pass material
-                for (int j = 0; j < scene->objects[i]->GetTriangleAmount(); j++) {
-                    triangles[triangleCounter] = new Triangle2D(lookDirection, transform, &scene->objects[i]->GetTriangles()[j], scene->objects[i]->GetMaterial());
+                for (int j = 0; j < scene->objects[i]->GetTriangleGroup()->GetTriangleCount(); j++) {
+                    triangles[triangleCounter] = new Triangle2D(lookDirection, transform, &scene->objects[i]->GetTriangleGroup()->GetTriangles()[j], scene->objects[i]->GetMaterial());
                     
-                    bool triangleInView = pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p1) * transform->GetScale()) ||
-                                          pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p2) * transform->GetScale()) ||
-                                          pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p3) * transform->GetScale());
+                    bool triangleInView = false;
 
-                    triangleInView = (triangleInView && triangles[triangleCounter]->averageDepth > 0);//culling behind camera
+                    if (triangles[triangleCounter]->averageDepth > 0){
+                        triangleInView = pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p1) * transform->GetScale()) ||
+                                         pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p2) * transform->GetScale()) ||
+                                         pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p3) * transform->GetScale());
+                    }
                     
                     if(triangleInView) triangleCounter++;
                     else delete triangles[triangleCounter];//out of view space remove from array

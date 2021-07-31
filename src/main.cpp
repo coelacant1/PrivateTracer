@@ -1,14 +1,11 @@
 #include <Arduino.h>
 #include <OctoWS2811.h>
 
-#include "Animation/Boot.h"
 #include "Filter/KalmanFilter.h"
 #include "Flash/CrashObjs.h"
-#include "Flash/MiscObjs.h"
 #include "Render/Camera.h"
 #include "Math/Rotation.h"
 #include "Morph/ProtoDRMorphAnimator.h"
-#include "Render/ObjectDeformer.h"
 
 #include "Flash/ProtoDR.h"
 #include "Flash/ProtoDRMini.h"
@@ -19,10 +16,9 @@ int drawingMemory[ledsPerStrip * 6];
 const int config = WS2811_GRB | WS2811_800kHz;
 OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
 
-Boot boot;
 ProtoDRMorphAnimator protoMorph;
 
-const uint8_t MaxBrightness = 40;
+const uint8_t MaxBrightness = 20;
 long previousTime = 0;
 
 CameraLayout cameraLayout = CameraLayout(CameraLayout::ZForward, CameraLayout::YUp);
@@ -110,26 +106,11 @@ void setup() {
     previousTime = micros();
 }
 
-void bootAnimation(){
-    for (float i = 0.0f; i < 1.0f; i += 1.0f / 1260.0f){
-        boot.Update(i);
-        boot.FadeIn(0.0125f);
-        
-        renderCameras(boot.GetScene());
-        updateLEDS();
-    }
-}
-
 void faceAnimation(){
     for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
         protoMorph.Update(i);
 
         protoMorph.GetScene();
-
-        //Vector3D rotate = Vector3D(0, 0, 45);
-
-        //camFronBotTransform.Rotate(rotate);
-        //camRearBotTransform.Rotate(rotate);
 
         renderCameras(protoMorph.GetScene());
 
@@ -138,8 +119,5 @@ void faceAnimation(){
 }
 
 void loop() {
-    //bootAnimation();
     faceAnimation();
-    //faceAnimation();
-    //deathAnimation();
 }

@@ -2,7 +2,7 @@
 
 #include "..\Render\Light.h"
 #include "..\Render\Object3D.h"
-#include "..\Render\ObjectDeformer.h"
+#include "..\Render\TriangleGroupDeformer.h"
 #include "..\Flash\BootObjs.h"
 #include "Animation.h"
 
@@ -18,7 +18,7 @@ private:
     Object3D cursorObj = Object3D(cursorString, 10, 10);
 
     Object3D planeObj = Object3D(planeString, 150, 250);
-    ObjectDeformer planeDeformer = ObjectDeformer(&planeObj);
+    TriangleGroupDeformer planeDeformer = TriangleGroupDeformer(&planeObj);
     const int frames = 1260;
 
 public:
