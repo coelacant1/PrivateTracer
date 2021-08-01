@@ -11,8 +11,10 @@
 #include "Flash/ProtoDRMini.h"
 
 #include "Objects\Cube.h"
+#include "Objects\Charmander.h"
 #include "Objects\DragonStatue.h"
 #include "Materials\DepthMaterial.h"
+#include "Materials\LightMaterial.h"
 
 const int ledsPerStrip = 306;
 DMAMEM int displayMemory[ledsPerStrip * 6];
@@ -21,10 +23,11 @@ const int config = WS2811_GRB | WS2811_800kHz;
 OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
 
 ProtoDRMorphAnimator protoMorph;
-DragonStatue cube;
+Charmander cube;
 Object3D* objects[1] = {cube.GetObject()};
 Scene cubeScene = Scene(objects, 1);
 DepthMaterial dMat = DepthMaterial(DepthMaterial::Z, 150.0f, 0.0f);
+LightMaterial lMat = LightMaterial();
 
 const uint8_t MaxBrightness = 20;
 long previousTime = 0;
@@ -113,7 +116,7 @@ void setup() {
 
     previousTime = micros();
 
-    cube.GetObject()->SetMaterial(&dMat);
+    cube.GetObject()->SetMaterial(&lMat);
 }
 
 void faceAnimation(){
@@ -133,15 +136,15 @@ void cubeAnimation(){
         float x = sinf(i * 3.14159f / 180.0f * 360.0f * 12.0f) * 360.0f;
         float y = cosf(i * 3.14159f / 180.0f * 360.0f * 12.0f) * 360.0f;
 
-        float sx = sinf(i * 3.14159f / 180.0f * 360.0f * 8.0f) * 0.8f + 3.0f;
+        float sx = sinf(i * 3.14159f / 180.0f * 360.0f * 8.0f) * 0.75f + 4.0f;
         
-        Quaternion rotation = Rotation(EulerAngles(Vector3D(x / 10.0f, i * 1440.0f * 6.0f, 0), EulerConstants::EulerOrderXZYS)).GetQuaternion();
+        Quaternion rotation = Rotation(EulerAngles(Vector3D(x / 100.0f, i * 1440.0f * 6.0f, 0), EulerConstants::EulerOrderXZYS)).GetQuaternion();
 
         cube.GetObject()->ResetVertices();
 
         cube.GetObject()->GetTransform()->SetRotation(rotation);
         cube.GetObject()->GetTransform()->SetScale(Vector3D(sx, sx, sx));
-        cube.GetObject()->GetTransform()->SetPosition(Vector3D(x / 10.0f, y / 10.0f, 600.0f));
+        cube.GetObject()->GetTransform()->SetPosition(Vector3D(0.0f, 0.0f, 600.0f));
 
         cube.GetObject()->UpdateTransform();
 

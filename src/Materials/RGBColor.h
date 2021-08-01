@@ -26,6 +26,12 @@ public:
         this->B = rgbColor.B;
     }
 
+    RGBColor(Vector3D color){
+        this->R = color.X;
+        this->G = color.Y;
+        this->B = color.Z;
+    }
+
     RGBColor Scale(uint8_t maxBrightness){
         int sR, sG, sB;
         
