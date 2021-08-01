@@ -22,4 +22,11 @@ public:
     Vector2D GetMaximum(){
         return max;
     }
+
+    bool Overlaps(BoundingBox2D *bb){
+        bool xOverlap = bb->GetMinimum().X < max.X && bb->GetMaximum().X > min.X;
+        bool yOverlap = bb->GetMinimum().Y < max.Y && bb->GetMaximum().Y > min.Y;
+
+        return xOverlap && yOverlap;
+    }
 };

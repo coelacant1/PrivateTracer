@@ -1,7 +1,6 @@
 #pragma once
 
 #include "..\Materials\Material.h"
-#include "OBJReader.h"
 #include "..\Math\Transform.h"
 #include "TriangleGroup.h"
 

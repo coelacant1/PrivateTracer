@@ -241,8 +241,8 @@ public:
         else Default();
         pM.Update();
         
-        float x = sinf(ratio * 3.14159f / 180.0f * 360.0f * 12.0f) * 3.0f;
-        float y = cosf(ratio * 3.14159f / 180.0f * 360.0f * 24.0f) * 3.0f;
+        float x = sinf(ratio * 3.14159f / 180.0f * 360.0f * 4.0f) * 3.0f;
+        float y = cosf(ratio * 3.14159f / 180.0f * 360.0f * 6.0f) * 3.0f;
         
         float linSweep = ratio > 0.5f ? 1.0f - ratio : ratio;
         float sShift = linSweep * 0.002f + 0.005f;

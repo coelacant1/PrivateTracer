@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include "..\Materials\Material.h"
 #include "..\Math\Transform.h"
@@ -9,75 +8,102 @@
 class Triangle2D {
 private:
     float denominator = 0.0f;
+
+    float p1X, p1Y, p2X, p2Y, p3X, p3Y, v0X, v0Y, v1X, v1Y, v2X, v2Y;
   
 public:
-	Vector2D p1;
-	Vector2D p2;
-	Vector2D p3;
-    Vector2D v0;
-    Vector2D v1;
-	Vector3D normal;
+	Vector3D* normal;
     Material* material;
 
     Vector3D* t3p1;
-    Vector3D* t3e2;
-    Vector3D* t3e1;
+    Vector3D* t3p2;
+    Vector3D* t3p3;
 
     float averageDepth = 0.0f;
 
 	Triangle2D(){}
 
 	Triangle2D(Vector2D p1, Vector2D p2, Vector2D p3) {
-		this->p1 = p1;
-		this->p2 = p2;
-		this->p3 = p3;
+		p1X = p1.X;
+		p1Y = p1.Y;
+		p2X = p2.X;
+		p2Y = p2.Y;
+		p3X = p3.X;
+		p3Y = p3.Y;
 
-        v0 = p2 - p1;
-        v1 = p3 - p1;
+        v0X = p2X - p1X;
+        v0Y = p2Y - p1Y;
+        v1X = p3X - p1X;
+        v1Y = p3Y - p1Y;
         
-        denominator = 1.0f / (v0.X * v1.Y - v1.X * v0.Y);
+        denominator = 1.0f / (v0X * v1Y - v1X * v0Y);
 	}
 
 	Triangle2D(Quaternion lookDirection, Transform* camT, Triangle3D* t, Material* material) {
         this->material = material;
 
-        Vector3D p1Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p1 - camT->GetPosition());// * transform->GetScale()
-        Vector3D p2Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p2 - camT->GetPosition());
-        Vector3D p3Normalized = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p3 - camT->GetPosition());
+        Vector3D p1 = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p1 - camT->GetPosition());// * transform->GetScale()
+        Vector3D p2 = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p2 - camT->GetPosition());
+        Vector3D p3 = camT->GetRotation().Multiply(lookDirection).UnrotateVector(*t->p3 - camT->GetPosition());
 
-        averageDepth = (p1Normalized.Z + p2Normalized.Z + p3Normalized.Z) / 3.0f;
+        averageDepth = (p1.Z + p2.Z + p3.Z) / 3.0f;
 
-		this->p1 = Vector2D(p1Normalized);
-		this->p2 = Vector2D(p2Normalized);
-		this->p3 = Vector2D(p3Normalized);
+		p1X = p1.X;
+		p1Y = p1.Y;
+		p2X = p2.X;
+		p2Y = p2.Y;
+		p3X = p3.X;
+		p3Y = p3.Y;
+
+        v0X = p2X - p1X;
+        v0Y = p2Y - p1Y;
+        v1X = p3X - p1X;
+        v1Y = p3Y - p1Y;
+
+        denominator = 1.0f / (v0X * v1Y - v1X * v0Y);
 
 		normal = t->Normal();
 
         t3p1 = t->p1;
-        t3e1 = &t->edge1;
-        t3e2 = &t->edge2;
-        
-        v0 = p2 - p1;
-        v1 = p3 - p1;
-
-        denominator = 1.0f / (v0.X * v1.Y - v1.X * v0.Y);
+        t3p2 = t->p2;
+        t3p3 = t->p3;
 	}
+
+    Vector2D GetP1(){
+        return Vector2D(p1X, p1Y);
+    }
+
+    Vector2D GetP2(){
+        return Vector2D(p2X, p2Y);
+    }
+
+    Vector2D GetP3(){
+        return Vector2D(p3X, p3Y);
+    }
 
     Material* GetMaterial(){
         return material;
     }
 
-    bool DidIntersect(Vector2D ray, float& u, float& v, float& w) {
-        float v2X = ray.X - p1.X;
-        float v2Y = ray.Y - p1.Y;
-        v = (v2X * v1.Y - v1.X * v2Y) * denominator;
-        w = (v0.X * v2Y - v2X * v0.Y) * denominator;
-        u = 1.0f - v - w;
+    bool DidIntersect(float x, float y, float& u, float& v, float& w) {
+        v2X = x - p1X;
+        v2Y = y - p1Y;
 
-        return u > 0 && v > 0 && w > 0;
+        v = (v2X * v1Y - v1X * v2Y) * denominator;
+        if (v <= 0.0f) return false;
+        if (v >= 1.0f) return false;
+
+        w = (v0X * v2Y - v2X * v0Y) * denominator;
+        if (w <= 0.0f) return false;
+        if (w >= 1.0f) return false;
+
+        u = 1.0f - v - w;
+        if (u <= 0.0f) return false;
+
+        return true;
     }
 
     String ToString() {
-        return p1.ToString() + " " + p2.ToString() + " " + p3.ToString();
+        return Vector2D(p1X, p1Y).ToString() + " " + Vector2D(p2X, p2Y).ToString() + " " + Vector2D(p3X, p3Y).ToString();
     }
 };

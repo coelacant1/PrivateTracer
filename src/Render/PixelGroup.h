@@ -54,17 +54,11 @@ public:
         return pixelCount;
     }
 
-    bool ContainsVector2D(Transform *t, Vector2D v){
-        /*
-        //rotate and move bounding box to transform
-         Serial.print(v.ToString());
-         Serial.print("\t");
-         Serial.print(bounds.GetMinimum().ToString());
-         Serial.print("\t");
-         Serial.println(bounds.GetMaximum().ToString());
-         delay(50);
-        */
+    bool Overlaps(BoundingBox2D* box){
+        return bounds.Overlaps(box);
+    }
 
+    bool ContainsVector2D(Vector2D v){
         return v.CheckBounds(bounds.GetMinimum(), bounds.GetMaximum());
     }
 };
