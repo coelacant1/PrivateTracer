@@ -10,6 +10,9 @@
 #include "Flash/ProtoDR.h"
 #include "Flash/ProtoDRMini.h"
 
+#include "Objects\Cube.h"
+#include "Materials\DepthMaterial.h"
+
 const int ledsPerStrip = 306;
 DMAMEM int displayMemory[ledsPerStrip * 6];
 int drawingMemory[ledsPerStrip * 6];
@@ -17,6 +20,10 @@ const int config = WS2811_GRB | WS2811_800kHz;
 OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
 
 ProtoDRMorphAnimator protoMorph;
+Cube cube;
+Object3D* objects[1] = {cube.GetObject()};
+Scene cubeScene = Scene(objects, 1);
+DepthMaterial dMat = DepthMaterial(200.0f, 0.0f);
 
 const uint8_t MaxBrightness = 20;
 long previousTime = 0;
@@ -104,6 +111,8 @@ void setup() {
     delay(250);
 
     previousTime = micros();
+
+    cube.GetObject()->SetMaterial(&dMat);
 }
 
 void faceAnimation(){
@@ -112,12 +121,48 @@ void faceAnimation(){
 
         protoMorph.GetScene();
 
+        float x = sinf(i * 3.14159f / 180.0f * 360.0f * 4.0f) * 7.5f;
+        float y = cosf(i * 3.14159f / 180.0f * 360.0f * 4.0f) * 7.5f;
+
+        Quaternion lookOffset = Rotation(EulerAngles(Vector3D(x, y, 0), EulerConstants::EulerOrderXZYS)).GetQuaternion();
+        
+        camFronTop.SetLookOffset(lookOffset);
+        camRearTop.SetLookOffset(lookOffset);
+        camFronBot.SetLookOffset(lookOffset);
+        camRearBot.SetLookOffset(lookOffset);
+        camRearMid.SetLookOffset(lookOffset);
+        camFronMid.SetLookOffset(lookOffset);
+
         renderCameras(protoMorph.GetScene());
 
         updateLEDS();
     }
 }
 
+void cubeAnimation(){
+    for (float i = 0.0f; i < 1.0f; i += 1.0f / 720.0f) {
+        float x = sinf(i * 3.14159f / 180.0f * 360.0f * 1.0f) * 360.0f;
+        float y = cosf(i * 3.14159f / 180.0f * 360.0f * 1.0f) * 360.0f;
+
+        
+        Quaternion rotation = Rotation(EulerAngles(Vector3D(x, y, -x), EulerConstants::EulerOrderXZYS)).GetQuaternion();
+
+        cube.GetObject()->ResetVertices();
+
+        cube.GetObject()->GetTransform()->SetRotation(rotation);
+
+        cube.GetObject()->GetTransform()->SetScale(Vector3D(i * 0.5f + 0.5f, 1.0f - i * 0.5f, i * 0.5f + 0.5f));
+        
+        cube.GetObject()->GetTransform()->SetPosition(Vector3D(0.0f, 100.0f, 600.0f));
+        cube.GetObject()->UpdateTransform();
+        
+        renderCameras(&cubeScene);
+
+        updateLEDS();
+    }
+}
+
 void loop() {
-    faceAnimation();
+    //faceAnimation();
+    cubeAnimation();
 }

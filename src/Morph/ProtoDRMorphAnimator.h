@@ -241,18 +241,18 @@ public:
         else Default();
         pM.Update();
         
-        float x = sinf(ratio * 3.14159f / 180.0f * 360.0f * 2.0f) * 3.0f;
-        float y = cosf(ratio * 3.14159f / 180.0f * 360.0f * 4.0f) * 3.0f;
+        float x = sinf(ratio * 3.14159f / 180.0f * 360.0f * 12.0f) * 3.0f;
+        float y = cosf(ratio * 3.14159f / 180.0f * 360.0f * 24.0f) * 3.0f;
         
         float linSweep = ratio > 0.5f ? 1.0f - ratio : ratio;
         float sShift = linSweep * 0.002f + 0.005f;
 
-        gNoiseMat.SetGradientPeriod(0.5f + linSweep * 2.0f);
+        gNoiseMat.SetGradientPeriod(0.5f + linSweep * 6.0f);
         gNoiseMat.HueShift(ratio * 360 * 2);
         sNoise.SetScale(Vector3D(sShift, sShift, sShift));
         sNoise.SetZPosition(x * 4.0f);
         
-        pM.GetObject()->GetTransform()->SetRotation(Vector3D(0, 180.0f, 0));
+        pM.GetObject()->GetTransform()->SetRotation(Vector3D(0, 180.0f, 0.0f));
         pM.GetObject()->GetTransform()->SetPosition(Vector3D(x, y, 600.0f));
         pM.GetObject()->GetTransform()->Scale(Vector3D(1.0f, 1.0f, 1.0f));
 

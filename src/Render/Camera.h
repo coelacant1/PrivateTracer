@@ -13,7 +13,7 @@ private:
     CameraLayout* cameraLayout;
     PixelGroup* pixelGroup;
     Quaternion lookDirection;
-    bool customDirection = false;
+    Quaternion lookOffset;
 
     RGBColor CheckRasterPixel(Scene* scene, Triangle2D** triangles, int numTriangles, Vector2D pixelRay){
         float zBuffer = 3.402823466e+38f;
@@ -37,7 +37,7 @@ private:
         }
 
         if(didIntersect){
-            Vector3D rotateRay = transform->GetRotation().Multiply(lookDirection).UnrotateVector(Vector3D(pixelRay.X, pixelRay.Y, 0) - transform->GetPosition());
+            Vector3D rotateRay = transform->GetRotation().Multiply(lookDirection).UnrotateVector(intersect - transform->GetPosition());
             
             color = triangles[triangle]->GetMaterial()->GetRGB(rotateRay, triangles[triangle]->normal);
         }
@@ -58,13 +58,8 @@ public:
         return transform;
     }
 
-    void SetLookDirection(Quaternion lookDirection){
-        customDirection = true;
-        this->lookDirection = lookDirection;
-    }
-    
-    void DisableCustomLookDirection(){
-        customDirection = false;
+    void SetLookOffset(Quaternion lookOffset){
+        this->lookOffset = lookOffset;
     }
 
     void Rasterize(Scene* scene) {
@@ -80,9 +75,7 @@ public:
         Triangle2D** triangles = new Triangle2D*[numTriangles];
         int triangleCounter = 0;
         
-        if(!customDirection){
-            lookDirection = transform->GetRotation().Conjugate();
-        }
+        lookDirection = transform->GetRotation().Conjugate() * lookOffset;
         
         //for each object in the scene, get the triangles
         for(int i = 0; i < scene->numObjects; i++){
@@ -98,6 +91,8 @@ public:
                                          pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p2) * transform->GetScale()) ||
                                          pixelGroup->ContainsVector2D(transform, lookDirection.UnrotateVector(triangles[triangleCounter]->p3) * transform->GetScale());
                     }
+
+                    triangleInView = 1;
                     
                     if(triangleInView) triangleCounter++;
                     else delete triangles[triangleCounter];//out of view space remove from array
