@@ -39,7 +39,7 @@ private:
         if(didIntersect){
             Vector3D intersect = (*triangles[triangle]->t3p1 * uf) + (*triangles[triangle]->t3p2 * vf) + (*triangles[triangle]->t3p3 * wf);
 
-            rayDirection.UnrotateVector(intersect);
+            intersect = rayDirection.UnrotateVector(intersect);
             
             color = triangles[triangle]->GetMaterial()->GetRGB(intersect, *triangles[triangle]->normal);
         }
@@ -95,7 +95,7 @@ public:
                         Vector2D p3 = lookDirection.UnrotateVector(triangles[triangleCounter]->GetP3()) * transform->GetScale();
 
                         BoundingBox2D triangleBox;
-                        
+
                         triangleBox.UpdateBounds(p1);
                         triangleBox.UpdateBounds(p2);
                         triangleBox.UpdateBounds(p3);

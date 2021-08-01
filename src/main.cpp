@@ -24,7 +24,7 @@ ProtoDRMorphAnimator protoMorph;
 DragonStatue cube;
 Object3D* objects[1] = {cube.GetObject()};
 Scene cubeScene = Scene(objects, 1);
-DepthMaterial dMat = DepthMaterial(150.0f, 0.0f);
+DepthMaterial dMat = DepthMaterial(DepthMaterial::Z, 150.0f, 0.0f);
 
 const uint8_t MaxBrightness = 20;
 long previousTime = 0;
