@@ -30,7 +30,7 @@ public:
         }
         else{
             for(unsigned int i = 0; i < pixelCount; i++){
-                pixels[i] = new Pixel(&pixelLocations[pixelCount - i]);
+                pixels[i] = new Pixel(&pixelLocations[pixelCount - i - 1]);
                 bounds.UpdateBounds(pixelLocations[i]);
             }
         }
