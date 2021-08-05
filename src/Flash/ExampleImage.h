@@ -8,6 +8,8 @@ private:
 
 public:
     ExampleImage(Vector2D size, Vector2D offset) : Image(size, offset) {
-        rgbData = &rgbMemory[0];
+        this->rgbData = &rgbMemory[0];
+        this->xPixels = 16;
+        this->yPixels = 16;
     }
 };
