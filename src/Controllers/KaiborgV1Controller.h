@@ -5,13 +5,15 @@
 #include "Render/Camera.h"
 #include "Flash/KaiborgV1Pixels.h"
 
+const int ledsPerStrip = 346;
+DMAMEM int displayMemory[346 * 6];
+int drawingMemory[346 * 6];
+const int config = WS2811_GRB | WS2811_800kHz;
+
+OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
+
 class KaiborgV1Controller : public Controller {
 private:
-    DMAMEM int displayMemory[346 * 6];
-    int drawingMemory[346 * 6];
-    const int config = WS2811_GRB | WS2811_800kHz;
-    OctoWS2811 leds = OctoWS2811(346, displayMemory, drawingMemory, config);
-
     CameraLayout cameraLayout = CameraLayout(CameraLayout::ZForward, CameraLayout::YUp);
 
     Transform camRghtTransform = Transform(Vector3D(), Vector3D(0, 0, -500.0f), Vector3D(1, 1, 1));
@@ -27,13 +29,16 @@ private:
     uint8_t maxBrightness;
 
 public:
-    KaiborgV1Controller(uint8_t maxBrightness) : Controller(*cameras, 2){
+    KaiborgV1Controller(uint8_t maxBrightness) : Controller(cameras, 2){
         this->maxBrightness = maxBrightness;
-        
-        leds.begin();
     }
 
-    float Display() override {
+    void Initialize() override{
+        leds.begin();
+        leds.show();
+    }
+
+    void Display() override {
         for (int i = 0; i < 571; i++){
             camLeftPixels.GetPixel(i)->Color = camLeftPixels.GetPixel(i)->Color.Scale(maxBrightness);
             camRghtPixels.GetPixel(i)->Color = camRghtPixels.GetPixel(i)->Color.Scale(maxBrightness);
